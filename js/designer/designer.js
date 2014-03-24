@@ -1,4 +1,4 @@
-(function(snaker){
+(function(JQ){
 	var designer={};
 	designer.config={
 		editable:true,
@@ -34,7 +34,7 @@
 		},
 		tools:{
 			attr:{
-				left:10,top:10
+				left:10,top:30
 			},
 			pointer:{},
 			path:{},
@@ -118,7 +118,7 @@
 		}
 	};
 	designer.rect=function(p,m){
-		var u=this,g="rect"+designer.util.nextId(),E=snaker.extend(true,{},designer.config.rect,p),C=m,t,e,n,f,x,v;
+		var u=this,g="rect"+designer.util.nextId(),E=JQ.extend(true,{},designer.config.rect,p),C=m,t,e,n,f,x,v;
 		t=C.rect(E.attr.x,E.attr.y,E.attr.width,E.attr.height,E.attr.r).hide().attr(E.attr);
 		e=C.image(designer.config.basePath+E.img.src,E.attr.x+E.img.width/2,E.attr.y+(E.attr.height-E.img.height)/2,E.img.width,E.img.height).hide();
 		n=C.text(E.attr.x+E.img.width+(E.attr.width-E.img.width)/2,E.attr.y+designer.config.lineHeight/2,E.name.text).hide().attr(E.name);
@@ -186,19 +186,19 @@
 			_bx=r;
 			_by=o
 		};
-		snaker([t.node,f.node,n.node,e.node]).bind("click",function(){
+		JQ([t.node,f.node,n.node,e.node]).bind("click",function(){
 			if(!designer.config.editable){return}w();
-			var o=snaker(C).data("mod");
+			var o=JQ(C).data("mod");
 			switch(o){
 				case"pointer":break;
-				case"path":var r=snaker(C).data("currNode");
+				case"path":var r=JQ(C).data("currNode");
 				if(r&&r.getId()!=g&&r.getId().substring(0,4)=="rect"){
-					snaker(C).trigger("addpath",[r,u])
+					JQ(C).trigger("addpath",[r,u])
 				}
 				break
 			}
-			snaker(C).trigger("click",u);
-			snaker(C).data("currNode",u);
+			JQ(C).trigger("click",u);
+			JQ(C).data("currNode",u);
 			return false
 		});
 		var j=function(o,r){
@@ -206,18 +206,18 @@
 				return
 			}
 			if(r.getId()==g){
-				snaker(C).trigger("showprops",[E.props,r])
+				JQ(C).trigger("showprops",[E.props,r])
 			}else{
 				d()
 			}
 		};
-		snaker(C).bind("click",j);
+		JQ(C).bind("click",j);
 		var c=function(o,F,r){
 			if(r.getId()==g){
 				f.attr({text:F})
 			}
 		};
-		snaker(C).bind("textchange",c);
+		JQ(C).bind("textchange",c);
 		function y(){
 			return"M"+q.x+" "+q.y+"L"+q.x+" "+(q.y+q.height)+"L"+(q.x+q.width)+" "+(q.y+q.height)+"L"+(q.x+q.width)+" "+q.y+"L"+q.x+" "+q.y
 		}
@@ -244,7 +244,7 @@
 			i.r.attr({x:q.x-h/2+q.width,y:q.y-h/2+q.height/2});
 			i.rt.attr({x:q.x-h/2+q.width,y:q.y-h/2});
 			s.attr({path:y()});
-			snaker(C).trigger("rectresize",u)
+			JQ(C).trigger("rectresize",u)
 		}
 		this.toJson=function(){
 			var r="{type:'"+E.type+"',text:{text:'"+f.attr("text")+"'}, attr:{ x:"+Math.round(t.attr("x"))+", y:"+Math.round(t.attr("y"))+", width:"+Math.round(t.attr("width"))+", height:"+Math.round(t.attr("height"))+"}, props:{";
@@ -278,7 +278,7 @@
 		};
 		this.restore=function(o){
 			var r=o;
-			E=snaker.extend(true,E,o);
+			E=JQ.extend(true,E,o);
 			f.attr({text:r.text.text});
 			B()
 		};
@@ -308,14 +308,23 @@
 		B()
 	};
 	designer.path=function(q,n,u,e){
-		var v=this,z=n,B=snaker.extend(true,{},designer.config.path),i,t,f,h=B.textPos,y,w,k=u,s=e,g="path"+designer.util.nextId(),x;
+		var v=this,z=n,B=JQ.extend(true,{},designer.config.path),i,t,f,h=B.textPos,y,w,k=u,s=e,g="path"+designer.util.nextId(),x;
 		function p(G,H,D,L){
 			var F=this,M=G,r,o=D,O=L,K,I,N=H;
-			switch(M){
-				case"from":r=z.rect(H.x-B.attr.fromDot.width/2,H.y-B.attr.fromDot.height/2,B.attr.fromDot.width,B.attr.fromDot.height).attr(B.attr.fromDot);break;
-				case"big":r=z.rect(H.x-B.attr.bigDot.width/2,H.y-B.attr.bigDot.height/2,B.attr.bigDot.width,B.attr.bigDot.height).attr(B.attr.bigDot);break;
-				case"small":r=z.rect(H.x-B.attr.smallDot.width/2,H.y-B.attr.smallDot.height/2,B.attr.smallDot.width,B.attr.smallDot.height).attr(B.attr.smallDot);break;
-				case"to":r=z.rect(H.x-B.attr.toDot.width/2,H.y-B.attr.toDot.height/2,B.attr.toDot.width,B.attr.toDot.height).attr(B.attr.toDot);break
+			switch (M) {
+				case "from":
+					r = z.rect(H.x - B.attr.fromDot.width / 2, H.y - B.attr.fromDot.height / 2, B.attr.fromDot.width, B.attr.fromDot.height).attr(B.attr.fromDot);
+					break;
+				case "big":
+					r = z.rect(H.x - B.attr.bigDot.width / 2, H.y - B.attr.bigDot.height / 2, B.attr.bigDot.width, B.attr.bigDot.height).attr(B.attr.bigDot);
+					break;
+				case "small":
+					r = z.rect(H.x - B.attr.smallDot.width / 2, H.y - B.attr.smallDot.height / 2, B.attr.smallDot.width, B.attr.smallDot.height).attr(B.attr.smallDot);
+					break;
+				case "to":
+					r = z.rect(H.x - B.attr.toDot.width / 2, H.y - B.attr.toDot.height / 2, B.attr.toDot.width, B.attr.toDot.height).attr(B.attr.toDot);
+					JQ("#pointer").click();
+					break
 			}
 			if(r&&(M=="big"||M=="small")){
 				r.drag(function(Q,P){C(Q,P)},function(){J()},function(){E()});
@@ -339,7 +348,8 @@
 					case"big":if(O&&O.right()&&O.right().type()=="to"){O.right().pos(designer.util.connPoint(s.getBBox(),N))}if(o&&o.left()&&o.left().type()=="from"){o.left().pos(designer.util.connPoint(k.getBBox(),N))}if(O&&O.right()){O.pos(designer.util.center(N,O.right().pos()))}if(o&&o.left()){o.pos(designer.util.center(N,o.left().pos()))}var S={x:N.x,y:N.y};if(designer.util.isLine(o.left().pos(),S,O.right().pos())){M="small";r.attr(B.attr.smallDot);this.pos(S);var P=o;o.left().right(o.right());o=o.left();P.remove();var R=O;O.right().left(O.left());O=O.right();R.remove()}break;
 					case"small":if(o&&O&&!designer.util.isLine(o.pos(),{x:N.x,y:N.y},O.pos())){M="big";r.attr(B.attr.bigDot);var P=new p("small",designer.util.center(o.pos(),N),o,o.right());o.right(P);o=P;var R=new p("small",designer.util.center(O.pos(),N),O.left(),O);O.left(R);O=R}break;
 					case"to":if(o&&o.left()&&o.left().type()=="from"){o.left().pos(designer.util.connPoint(k.getBBox(),N))}if(o&&o.left()){o.pos(designer.util.center(N,o.left().pos()))}break
-				}m()
+				}
+				m();
 			}
 		}
 		function j(){
@@ -435,7 +445,7 @@
 				}
 			}
 		}
-		B=snaker.extend(true,B,q);
+		B=JQ.extend(true,B,q);
 		i=z.path(B.attr.path.path).attr(B.attr.path);
 		t=z.path(B.attr.arrow.path).attr(B.attr.arrow);
 		x=new j();
@@ -451,34 +461,34 @@
 			h={x:f.attr("x")-o.x,y:f.attr("y")-o.y}
 		});
 		m();
-		snaker([i.node,t.node]).bind("click",function(){
+		JQ([i.node,t.node]).bind("click",function(){
 			if(!designer.config.editable){return}
-			snaker(z).trigger("click",v);
-			snaker(z).data("currNode",v);
+			JQ(z).trigger("click",v);
+			JQ(z).data("currNode",v);
 			return false
 		});
 		var l=function(r,C){
 			if(!designer.config.editable){return}
 			if(C&&C.getId()==g){
 				x.show();
-				snaker(z).trigger("showprops",[B.props,v])
+				JQ(z).trigger("showprops",[B.props,v])
 			}else{
 				x.hide()
 			}
-			var o=snaker(z).data("mod");
+			var o=JQ(z).data("mod");
 			switch(o){
 				case"pointer":break;
 				case"path":break
 			}
 		};
-		snaker(z).bind("click",l);
+		JQ(z).bind("click",l);
 		var A=function(o,r){
 			if(!designer.config.editable){return}
 			if(r&&(r.getId()==k.getId()||r.getId()==s.getId())){
-				snaker(z).trigger("removepath",v)
+				JQ(z).trigger("removepath",v)
 			}
 		};
-		snaker(z).bind("removerect",A);
+		JQ(z).bind("removerect",A);
 		var d=function(C,D){
 			if(!designer.config.editable){return}
 			if(k&&k.getId()==D.getId()){
@@ -504,13 +514,13 @@
 				m()
 			}
 		};
-		snaker(z).bind("rectresize",d);
+		JQ(z).bind("rectresize",d);
 		var c=function(r,o,C){
 			if(C.getId()==g){
 				f.attr({text:o})
 			}
 		};
-		snaker(z).bind("textchange",c);
+		JQ(z).bind("textchange",c);
 		this.from=function(){return k};
 		this.to=function(){return s};
 		this.toJson=function(){
@@ -543,7 +553,7 @@
 		};
 		this.restore=function(o){
 			var r=o;
-			B=snaker.extend(true,B,o);
+			B=JQ.extend(true,B,o);
 			x.restore(r.dots)
 		};
 		this.remove=function(){
@@ -552,23 +562,23 @@
 			t.remove();
 			f.remove();
 			try{
-				snaker(z).unbind("click",l)
+				JQ(z).unbind("click",l)
 			}catch(o){}
 			try{
-				snaker(z).unbind("removerect",A)
+				JQ(z).unbind("removerect",A)
 			}catch(o){}
 			try{
-				snaker(z).unbind("rectresize",d)
+				JQ(z).unbind("rectresize",d)
 			}catch(o){}
 			try{
-				snaker(z).unbind("textchange",c)
+				JQ(z).unbind("textchange",c)
 			}catch(o){}
 		};
 		function m(){
 			var r=x.toPathString(),o=x.midDot().pos();
 			i.attr({path:r[0]});
 			t.attr({path:r[1]});
-			f.attr({x:o.x+h.x,y:o.y+h.y})
+			f.attr({x:o.x+h.x,y:o.y+h.y});
 		}
 		this.getId=function(){return g};
 		this.text=function(){
@@ -584,14 +594,14 @@
 		}
 	};
 	designer.props=function(h,f){
-		var j=this,c=snaker("#properties").hide().draggable({handle:"#properties_handle"}).resizable().css(designer.config.props.attr).bind("click",function(){return false}),e=c.find("table"),g=f,i;
+		var j=this,c=JQ("#properties").hide().draggable({handle:"#properties_handle"}).resizable().css(designer.config.props.attr).bind("click",function(){return false}),e=c.find("table"),g=f,i;
 		var d=function(n,m,o){
 			if(i&&i.getId()==o.getId()){
 				return
 			}
 			i=o;
-			snaker(e).find(".editor").each(function(){
-				var k=snaker(this).data("editor");
+			JQ(e).find(".editor").each(function(){
+				var k=JQ(this).data("editor");
 				if(k){k.destroy()}
 			});
 			e.empty();
@@ -610,52 +620,52 @@
 				}
 			}
 		};
-		snaker(g).bind("showprops",d)
+		JQ(g).bind("showprops",d)
 	};
 	designer.editors={
 		textEditor:function(){
 			var d,e,c,g,f;
 			this.init=function(i,h,m,l,j){
 				d=i;e=h;c=m;g=l;f=j;
-				snaker('<input style="width:98%;"/>').val(g.text()).change(function(){
-					i[e].value=snaker(this).val();
-					snaker(f).trigger("textchange",[snaker(this).val(),g])
+				JQ('<input style="width:98%;"/>').val(g.text()).change(function(){
+					i[e].value=JQ(this).val();
+					JQ(f).trigger("textchange",[JQ(this).val(),g])
 				}).appendTo("#"+c);
-				snaker("#"+c).data("editor",this)
+				JQ("#"+c).data("editor",this)
 			};
 			this.destroy=function(){
-				snaker("#"+c+" input").each(function(){
-					d[e].value=snaker(this).val();
-					snaker(f).trigger("textchange",[snaker(this).val(),g])
+				JQ("#"+c+" input").each(function(){
+					d[e].value=JQ(this).val();
+					JQ(f).trigger("textchange",[JQ(this).val(),g])
 				})
 			}
 		}
 	};
 	designer.init=function(x,r){
-		var v=snaker(window).width(),e=snaker(window).height(),y=Raphael(x,v*1.5,e*1.5),q={},g={};
-		snaker.extend(true,designer.config,r);
-		snaker(document).keydown(function(i){
+		var v=JQ(window).width(),e=JQ(window).height(),y=Raphael(x,v*1.5,e*1.5),q={},g={};
+		JQ.extend(true,designer.config,r);
+		JQ(document).keydown(function(i){
 			if(!designer.config.editable){return}
 			if(i.keyCode==46){
-				var j=snaker(y).data("currNode");
+				var j=JQ(y).data("currNode");
 				if(j){
 					if(j.getId().substring(0,4)=="rect"){
-						snaker(y).trigger("removerect",j)
+						JQ(y).trigger("removerect",j)
 					}else{
 						if(j.getId().substring(0,4)=="path"){
-							snaker(y).trigger("removepath",j)
+							JQ(y).trigger("removepath",j)
 						}
 					}
-					snaker(y).removeData("currNode")
+					JQ(y).removeData("currNode")
 				}
 			}
 		});
-		snaker(document).click(function(){
-			snaker(y).data("currNode",null);
-			snaker(y).trigger("click",{
+		JQ(document).click(function(){
+			JQ(y).data("currNode",null);
+			JQ(y).trigger("click",{
 				getId:function(){return ""}
 			});
-			snaker(y).trigger("showprops",[designer.config.props.props,{getId:function(){return ""}}])
+			JQ(y).trigger("showprops",[designer.config.props.props,{getId:function(){return ""}}])
 		});
 		var w=function(c,i){
 			if(!designer.config.editable){return}
@@ -669,36 +679,36 @@
 				}
 			}
 		};
-		snaker(y).bind("removepath",w);
-		snaker(y).bind("removerect",w);
-		snaker(y).bind("addrect",function(j,c,k){
-			var i=new designer.rect(snaker.extend(true,{},designer.config.tools.states[c],k),y);
+		JQ(y).bind("removepath",w);
+		JQ(y).bind("removerect",w);
+		JQ(y).bind("addrect",function(j,c,k){
+			var i=new designer.rect(JQ.extend(true,{},designer.config.tools.states[c],k),y);
 			q[i.getId()]=i
 		});
 		var f=function(i,k,j){
 			var c=new designer.path({},y,k,j);
 			g[c.getId()]=c
 		};
-		snaker(y).bind("addpath",f);
-		snaker(y).data("mod","point");
+		JQ(y).bind("addpath",f);
+		JQ(y).data("mod","point");
 		if(designer.config.editable){
-			snaker("#toolbox").draggable({handle:"#toolbox_handle"}).css(designer.config.tools.attr);
-			snaker("#toolbox .node").hover(function(){snaker(this).addClass("mover")},function(){snaker(this).removeClass("mover")});
-			snaker("#toolbox .selectable").click(function(){
-				snaker(".selected").removeClass("selected");
-				snaker(this).addClass("selected");
-				snaker(y).data("mod",this.id)
+			JQ("#toolbox").draggable({handle:"#toolbox_handle"}).css(designer.config.tools.attr);
+			JQ("#toolbox .node").hover(function(){JQ(this).addClass("mover")},function(){JQ(this).removeClass("mover")});
+			JQ("#toolbox .selectable").click(function(){
+				JQ(".selected").removeClass("selected");
+				JQ(this).addClass("selected");
+				JQ(y).data("mod",this.id)
 			});
-			snaker("#toolbox .state").each(function(){
-				snaker(this).draggable({helper:"clone"})
+			JQ("#toolbox .state").each(function(){
+				JQ(this).draggable({helper:"clone"})
 			});
-			snaker(x).droppable({
+			JQ(x).droppable({
 				accept:".state",
 				drop:function(c,i){
-					snaker(y).trigger("addrect",[i.helper.attr("type"),{attr:{x:i.helper.offset().left,y:i.helper.offset().top}}])
+					JQ(y).trigger("addrect",[i.helper.attr("type"),{attr:{x:i.helper.offset().left,y:i.helper.offset().top}}])
 				}
 			});
-			snaker("#save").click(function(){
+			JQ("#save").click(function(){
 				/**
 				var i="{states:{";
 				for(var c in q){
@@ -729,10 +739,10 @@
 				*/
 				var i="<process ";
 				for(var c in designer.config.props.props){
-					if((c=="name"||c=="displayName")&&designer.config.props.props[c].value==""){
-						alert("流程定义名称、显示名称不能为空");
-						return;
-					}
+					// if((c=="name"||c=="displayName")&&designer.config.props.props[c].value==""){
+					// 	alert("流程定义名称、显示名称不能为空");
+					// 	return;
+					// }
 					if(designer.config.props.props[c].value!=""){
 						i+=c+"=\""+designer.config.props.props[c].value+"\" "
 					}
@@ -772,7 +782,7 @@
 			var z={};
 			if(B.states){
 				for(var s in B.states){
-					var d=new designer.rect(snaker.extend(true,{},designer.config.tools.states[B.states[s].type],B.states[s]),y);
+					var d=new designer.rect(JQ.extend(true,{},designer.config.tools.states[B.states[s].type],B.states[s]),y);
 					d.restore(B.states[s]);
 					z[s]=d;
 					q[d.getId()]=d
@@ -780,7 +790,7 @@
 			}
 			if(B.paths){
 				for(var s in B.paths){
-					var n=new designer.path(snaker.extend(true,{},designer.config.tools.path,B.paths[s]),y,z[B.paths[s].from],z[B.paths[s].to]);
+					var n=new designer.path(JQ.extend(true,{},designer.config.tools.path,B.paths[s]),y,z[B.paths[s].from],z[B.paths[s].to]);
 					n.restore(B.paths[s]);
 					g[n.getId()]=n
 				}
@@ -831,9 +841,9 @@
 			}
 		}
 	};
-	snaker.fn.snakerflow=function(c){
+	JQ.fn.flow=function(c){
 		return this.each(function(){
 			designer.init(this,c)
 		})
 	};
-	snaker.snakerflow=designer})(jQuery);
+	JQ.flow=designer})(jQuery);

@@ -1,7 +1,7 @@
 (function($){
-var snakerflow = $.snakerflow;
+var flow = $.flow;
 
-$.extend(true, snakerflow.editors, {
+$.extend(true, flow.editors, {
 	inputEditor : function(){
 		var _props,_k,_div,_src,_r;
 		this.init = function(props, k, div, src, r){
