@@ -594,7 +594,7 @@
 		}
 	};
 	designer.props=function(h,f){
-		var j=this,c=JQ("#properties").hide().draggable({handle:"#properties_handle"}).resizable().css(designer.config.props.attr).bind("click",function(){return false}),e=c.find("table"),g=f,i;
+		var j=this,c=JQ("#properties").hide().draggable({handle:"#properties_handle"}).resizable().css(designer.config.props.attr).bind("click",function(){return false}),e=c.find("table[type=property]"),g=f,i;
 		var d=function(n,m,o){
 			if(i&&i.getId()==o.getId()){
 				return

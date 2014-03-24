@@ -81,22 +81,6 @@
 					editor: function() {
 						return new flow.editors.inputEditor();
 					}
-				},
-				preInterceptors: {
-					name: 'preInterceptors',
-					label: '前置拦截器',
-					value: '',
-					editor: function() {
-						return new flow.editors.inputEditor();
-					}
-				},
-				postInterceptors: {
-					name: 'postInterceptors',
-					label: '后置拦截器',
-					value: '',
-					editor: function() {
-						return new flow.editors.inputEditor();
-					}
 				}
 			}
 		},
@@ -126,22 +110,6 @@
 					editor: function() {
 						return new flow.editors.inputEditor();
 					}
-				},
-				preInterceptors: {
-					name: 'preInterceptors',
-					label: '前置拦截器',
-					value: '',
-					editor: function() {
-						return new flow.editors.inputEditor();
-					}
-				},
-				postInterceptors: {
-					name: 'postInterceptors',
-					label: '后置拦截器',
-					value: '',
-					editor: function() {
-						return new flow.editors.inputEditor();
-					}
 				}
 			}
 		},
@@ -152,7 +120,7 @@
 				text: '<<task>>'
 			},
 			text: {
-				text: '审批节点'
+				text: '任务节点'
 			},
 			img: {
 				src: 'images/48/task_empty.png',
@@ -269,46 +237,6 @@
 					value: '',
 					editor: function() {
 						return new flow.editors.textEditor();
-					}
-				},
-				clazz: {
-					name: 'clazz',
-					label: '类路径',
-					value: '',
-					editor: function() {
-						return new flow.editors.inputEditor();
-					}
-				},
-				methodName: {
-					name: 'methodName',
-					label: '方法名称',
-					value: '',
-					editor: function() {
-						return new flow.editors.inputEditor();
-					}
-				},
-				args: {
-					name: 'args',
-					label: '参数变量',
-					value: '',
-					editor: function() {
-						return new flow.editors.inputEditor();
-					}
-				},
-				preInterceptors: {
-					name: 'preInterceptors',
-					label: '前置拦截器',
-					value: '',
-					editor: function() {
-						return new flow.editors.inputEditor();
-					}
-				},
-				postInterceptors: {
-					name: 'postInterceptors',
-					label: '后置拦截器',
-					value: '',
-					editor: function() {
-						return new flow.editors.inputEditor();
 					}
 				}
 			}

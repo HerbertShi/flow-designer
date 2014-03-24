@@ -106,3 +106,12 @@ body {
 	height: 24px;
 	width:460px;
 }
+
+#properties_handle div{
+	width:100px;
+	background-color: #fff;
+	cursor: pointer;
+}
+#properties_handle div.active{
+	background-color: #CDF07F;
+}
