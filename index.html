@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+<head>
+	<title>流程设计</title>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+
+	<link rel="stylesheet" href="css/designer1.css" type="text/css" media="all" />
+
+	<script src="js/raphael-min.js" type="text/javascript"></script>
+	<script src="js/jquery-ui-1.8.4.custom/js/jquery.min.js" type="text/javascript"></script>
+	<script src="js/jquery-ui-1.8.4.custom/js/jquery-ui.min.js" type="text/javascript"></script>
+
+	<script type="text/javascript">
+			$(function(){
+				$("#toolbox .node").hover(function(){$(this).addClass("mover")},function(){$(this).removeClass("mover")});
+				$("#toolbox").draggable({handle:"#toolbox_handle"})
+			});
+		</script>		
+</head>
+<body>
+	<div id="menu">
+		<input type="button" value="保存" />	
+		<input type="button" value="导入" />	
+		<input type="button" value="导出" />	
+		<input type="button" value="保存退出" />	
+		<input type="button" value="删除" />	
+		<input type="button" value="流程检测" />	
+	</div>
+	<div id="toolbox">
+		<div id="toolbox_handle">工具集</div>
+		<div class="node" id="pointer">
+			<img src="js/designer/images/select16.gif" />	
+			&nbsp;&nbsp;Select
+		</div>
+		<div class="node" id="path">
+			<img src="js/designer/images/16/flow_sequence.png" />	
+			&nbsp;&nbsp;transition
+		</div>
+		<div>
+			<hr/>	
+		</div>
+		<div class="node" id="start" type="start">
+			<img
+	src="js/designer/images/16/start_event_empty.png" />	
+			&nbsp;&nbsp;开始节点
+		</div>
+
+		<div class="node" id="end" type="end">
+			<img
+	src="js/designer/images/16/end_event_terminate.png" />	
+			&nbsp;&nbsp;结束节点
+		</div>
+		<div class="node" id="task" type="task">
+			<img
+	src="js/designer/images/16/task_empty.png" />	
+			&nbsp;&nbsp;审批节点
+		</div>
+		<div class="node" id="task" type="custom">
+			<img
+	src="js/designer/images/16/task_empty.png" />	
+			&nbsp;&nbsp;知会节点
+		</div>
+	</div>
+
+	<div id="flow"></div>
+</body>
+</html>
