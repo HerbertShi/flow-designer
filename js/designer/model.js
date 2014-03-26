@@ -16,7 +16,7 @@
 			label: '名称',
 			value: '',
 			editor: function() {
-				return new flow.editors.inputEditor();
+				return new flow.editors.readOnlyEditor();
 			}
 		},
 		displayName: {
@@ -77,9 +77,17 @@
 				name: {
 					name: 'name',
 					label: '名称',
-					value: '开始节点',
+					value: '',
 					editor: function() {
-						return new flow.editors.inputEditor();
+						return new flow.editors.readOnlyEditor();
+					}
+				},
+				displayName: {
+					name: 'displayName',
+					label: '显示名称',
+					value: '',
+					editor: function() {
+						return new flow.editors.textEditor();
 					}
 				}
 			}
@@ -106,9 +114,17 @@
 				name: {
 					name: 'name',
 					label: '名称',
-					value: '结束节点',
+					value: '',
 					editor: function() {
-						return new flow.editors.inputEditor();
+						return new flow.editors.readOnlyEditor();
+					}
+				},
+				displayName: {
+					name: 'displayName',
+					label: '显示名称',
+					value: '',
+					editor: function() {
+						return new flow.editors.textEditor();
 					}
 				}
 			}
@@ -133,7 +149,7 @@
 					label: '名称',
 					value: '',
 					editor: function() {
-						return new flow.editors.inputEditor();
+						return new flow.editors.readOnlyEditor();
 					}
 				},
 				displayName: {
@@ -228,7 +244,7 @@
 					label: '名称',
 					value: '',
 					editor: function() {
-						return new flow.editors.inputEditor();
+						return new flow.editors.readOnlyEditor();
 					}
 				},
 				displayName: {

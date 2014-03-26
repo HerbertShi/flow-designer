@@ -79,8 +79,9 @@
 			return{x:(d.x-c.x)/2+c.x,y:(d.y-c.y)/2+c.y}
 		},
 		nextId:(function(){
-			var c=0;
-			return function(){return ++c}
+			//var c=0;
+			//return function(){return ++c}
+			return function(){return (new Date()).getTime()}
 		})(),
 		connPoint:function(j,d){
 			var c=d,e={x:j.x+j.width/2,y:j.y+j.height/2};
