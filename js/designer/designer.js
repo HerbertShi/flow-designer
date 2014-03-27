@@ -306,7 +306,9 @@
 		this.attr=function(o){
 			if(o){t.attr(o)}
 		};
-		B()
+		B();
+
+		JQ(C).trigger("click",this);
 	};
 	designer.path=function(q,n,u,e){
 		var v=this,z=n,B=JQ.extend(true,{},designer.config.path),i,t,f,h=B.textPos,y,w,k=u,s=e,g="path"+designer.util.nextId(),x;
@@ -644,6 +646,7 @@
 	};
 	designer.init=function(x,r){
 		var v=JQ(window).width(),e=JQ(window).height(),y=Raphael(x,v*1.5,e*1.5),q={},g={};
+
 		JQ.extend(true,designer.config,r);
 		JQ(document).keydown(function(i){
 			if(!designer.config.editable){return}
@@ -679,16 +682,22 @@
 					i.remove()
 				}
 			}
+
+			JQ("#sync").trigger("sync",{"node":q,"path":g});
 		};
 		JQ(y).bind("removepath",w);
 		JQ(y).bind("removerect",w);
 		JQ(y).bind("addrect",function(j,c,k){
 			var i=new designer.rect(JQ.extend(true,{},designer.config.tools.states[c],k),y);
-			q[i.getId()]=i
+			q[i.getId()]=i;
+
+			JQ("#sync").trigger("sync",{"node":q,"path":g});
 		});
 		var f=function(i,k,j){
 			var c=new designer.path({},y,k,j);
-			g[c.getId()]=c
+			g[c.getId()]=c;
+
+			JQ("#sync").trigger("sync",{"node":q,"path":g});
 		};
 		JQ(y).bind("addpath",f);
 		JQ(y).data("mod","point");
@@ -709,7 +718,9 @@
 					JQ(y).trigger("addrect",[i.helper.attr("type"),{attr:{x:i.helper.offset().left,y:i.helper.offset().top}}])
 				}
 			});
+
 			JQ("#save").click(function(){
+				JQ("#sync").trigger("sync",{"node":q,"path":g});
 				/**
 				var i="{states:{";
 				for(var c in q){

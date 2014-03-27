@@ -115,3 +115,9 @@ body {
 #properties_handle div.active{
 	background-color: #CDF07F;
 }
+
+
+/***************流程信息栏************************/
+#flowInfoTable table{
+	border: 1px solid #ccc;
+}
