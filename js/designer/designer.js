@@ -595,7 +595,9 @@
 		}
 	};
 	designer.props=function(h,f){
-		var j=this,c=JQ("#properties").hide().draggable({handle:"#properties_handle"}).resizable().css(designer.config.props.attr).bind("click",function(){return false}),e=c.find("table[type=property]"),g=f,i;
+		var j=this,c=JQ("#properties").hide().draggable({handle:"#properties_handle"})
+		                              .resizable().css(designer.config.props.attr)
+		                              .bind("click",function(){return false}),e=c.find("table[type=property]"),g=f,i;
 		var d=function(n,m,o){
 			if(i&&i.getId()==o.getId()){
 				return
@@ -607,6 +609,12 @@
 			});
 			e.empty();
 			c.show();
+			var num=-1;
+			var array={};
+			var len=0;
+			for(var a in m){
+				len++;
+			}
 			for(var l in m){
 				if(m[l].name=="name"&&m[l].value==""){
 					m[l].value=o.getId()
@@ -615,10 +623,36 @@
 				if(!m[l].label){
 					continue;
 				}
-				e.append("<tr><td class='properties_name'>"+m[l].label+"</td><td class='properties_value'><div id='p"+l+"' class='editor'></div></td></tr>");
-				if(m[l].editor){
-					m[l].editor().init(m,l,"p"+l,o,g)
+                num++;
+                array[num]=l;
+				if ((num % 2 == 1) && (num < len - 1)) {
+					var num1 = num - 1;
+
+					e.append("<tr><td class='properties_name'>" + m[array[num1]].label + "</td><td class='properties_value'><div id='p" + array[num1] + "' class='editor'></div></td><td class='properties_name'>" + m[array[num]].label + "</td><td class='properties_value'><div id='p" + array[num] + "' class='editor'></div></td></tr>");
+					if ((m[array[num1]].editor)&&(m[array[num]].editor)) {
+						m[array[num1]].editor().init(m, array[num1], "p" + array[num1], o, g)
+						m[array[num]].editor().init(m, array[num], "p" + array[num], o, g)
+					}
 				}
+				if (num == len - 1) {
+					var num1 = num - 1;
+					if (len == 2) {
+						e.append("<tr><td class='properties_name'>" + m[array[num1]].label + "</td><td class='properties_value'><div id='p" + array[num1] + "' class='editor'></div></td><td class='properties_name'>" + m[array[num]].label + "</td><td class='properties_value'><div id='p" + array[num] + "' class='editor'></div></td></tr>");
+						if ((m[array[num1]].editor) && (m[array[num]].editor)) {
+							m[array[num1]].editor().init(m, array[num1], "p" + array[num1], o, g)
+							m[array[num]].editor().init(m, array[num], "p" + array[num], o, g)
+						}
+					} else {
+						e.append("<tr><td class='properties_name'>" + m[array[num]].label + "</td><td class='properties_value'><div id='p" + array[num] + "' class='editor'></div></td></tr>");
+						if (m[array[num]].editor) {
+						
+						m[array[num]].editor().init(m, array[num], "p" + array[num], o, g)
+					}
+					}
+				}
+				/*if(m[l].editor){
+					m[l].editor().init(m,l,"p"+l,o,g)
+				}*/
 			}
 		};
 		JQ(g).bind("showprops",d)

@@ -62,7 +62,7 @@
 				text: '<<start>>'
 			},
 			text: {
-				text: 'start'
+				text: '开始节点'
 			},
 			img: {
 				src: 'images/48/start_event_empty.png',
@@ -99,7 +99,7 @@
 				text: '<<end>>'
 			},
 			text: {
-				text: 'end'
+				text: '结束节点'
 			},
 			img: {
 				src: 'images/48/end_event_terminate.png',
@@ -160,14 +160,14 @@
 						return new flow.editors.textEditor();
 					}
 				},
-				form: {
+			/*	form: {
 					name: 'form',
 					label: '表单',
 					value: '',
 					editor: function() {
-						return new flow.editors.inputEditor();
+						return new flow.editors.checkEditor();
 					}
-				},
+				},*/
 				assignee: {
 					name: 'assignee',
 					label: '参与者',
@@ -176,7 +176,124 @@
 						return new flow.editors.inputEditor();
 					}
 				},
-				assignmentHandler: {
+				performType: {
+					name: 'performType',
+					label: '驳回到',
+					value: '',
+					editor: function() {
+						return new flow.editors.selectEditor([{
+							name: 'ANY',
+							value: 'ANY'
+
+						}, {
+							name: 'ALL',
+							value: 'ALL'
+						},{
+							name: '男',
+							value: '男'
+						}
+
+						]);
+					}
+				},
+				flowDate: {
+					name: 'flowDate',
+					label: '流转期限',
+					value: '',
+					editor: function() {
+						return new flow.editors.inputEditor();
+					}
+				},
+				submitLogic: {
+					name: 'submitLogic',
+					label: '提交逻辑',
+					value: '',
+					editor: function() {
+						return new flow.editors.selectEditor([{
+							name: 'and',
+							value: 'and'
+
+						}, {
+							name: 'or',
+							value: 'or'
+						}
+
+						]);
+					}
+				},
+				replyOpinion: {
+					name: 'replyOpinion',
+					label: '可回复意见',
+					value: '',
+					editor: function() {
+						return new flow.editors.checkEditor();
+					}
+				},
+				checkOtherOpinion: {
+					name: 'checkOtherOpinion',
+					label: '可否查看他人意见',
+					value: '',
+					editor: function() {
+						return new flow.editors.checkEditor();
+					}
+				},
+				insertEmail: {
+					name: 'insertEmail',
+					label: '可插入邮件',
+					value: '',
+					editor: function() {
+						return new flow.editors.checkEditor();
+					}
+				},
+				checkAttachment: {
+					name: 'checkAttachment',
+					label: '可否查看附件',
+					value: '',
+					editor: function() {
+						return new flow.editors.checkEditor();
+					}
+				},
+				trackAccepter: {
+					name: 'trackAccepter',
+					label: '跟踪验收人',
+					value: '',
+					editor: function() {
+						return new flow.editors.checkEditor();
+					}
+				},
+				isUseTrueName: {
+					name: 'isUseTrueName',
+					label: '是否现实姓名',
+					value: '',
+					editor: function() {
+						return new flow.editors.checkEditor();
+					}
+				},
+				promptNext: {
+					name: 'promptNext',
+					label: '信息提示下一步',
+					value: '',
+					editor: function() {
+						return new flow.editors.checkEditor();
+					}
+				},
+				approvedIsNeedIdentityConfirm: {
+					name: 'approvedIsNeedIdentityConfirm',
+					label: '审批是否需要身份确认',
+					value: '',
+					editor: function() {
+						return new flow.editors.checkEditor();
+					}
+				},
+				fillInstruction: {
+					name: 'fillInstruction',
+					label: '填写说明',
+					value: '',
+					editor: function() {
+						return new flow.editors.textareaEditor();
+					}
+				},
+				/*assignmentHandler: {
 					name: 'assignmentHandler',
 					label: '参与者处理类',
 					value: '',
@@ -221,7 +338,7 @@
 					editor: function() {
 						return new flow.editors.inputEditor();
 					}
-				}
+				}*/
 			}
 		},
 		notify: {
