@@ -30,7 +30,6 @@
 					tools: {
 						save: {
 							onclick: function(data) {
-
 								console.log(data);
 							}
 						}
@@ -42,12 +41,87 @@
 					$(this).addClass("active");
 					$(".properties_all").hide();
 					$(".properties_all[type="+$(this).attr("type")+"]").show();
-					// if($(this).attr("type") == "property"){
-
-					// }else if($(this).attr("type") == "field"){
-
-					// }
 				});
+
+				$("#sync").bind("sync",function(e,i){
+					var q = i.node,g = i.path;
+					var node = [];
+					var path = [];
+					for(var qI in q){
+						if(q[qI]){
+							node.push(eval("(" + q[qI].toJson() + ")"));
+						}
+					}
+					for(var gI in g){
+						if(g[gI]){
+							path.push(eval("(" + g[gI].toJson() + ")"));
+						}
+					}
+
+					disposTable(node,path);
+				});
+
+				var nodeIndex = 0;
+				function disposTable(_node,_path){
+					$("#flowInfoTable tbody").empty();
+					nodeIndex =0;
+					for (var i = 0; i < _node.length; i++) {
+						if (_node[i].type == "start") {
+							nodeIndex++;
+							$("#flowInfoTable tbody").append(getNextNode(renderTable(nodeIndex,_node[i].props),_node[i].props.name.value).join(""));
+							break;
+						}
+					}
+
+					function getNoticeNode(){
+						
+					}
+
+					function getNextNode(_currentHtml,_startName) {
+							for(var i=0;i<_path.length;i++){
+								if(_path[i].from == _startName){
+									for(var j =0;j<_node.length;j++){
+										if (_node[j].props.name.value == _path[i].to) {
+											if (_node[j].type == "task") {
+												nodeIndex++;
+												return getNextNode(_currentHtml.concat(renderTable(nodeIndex,_node[j].props)),_node[j].props.name.value);
+											} else if (_node[j].type == "end") {
+												nodeIndex++;
+												return _currentHtml.concat(renderTable(nodeIndex,_node[j].props));
+											}
+										}
+									}
+								}
+							}
+							return _currentHtml;
+					}
+				}
+
+				function renderTable(_i,_item) {
+					var html = [];
+					html.push("<tr id='" + _item.name.value + "'>");
+					html.push("<td>" + _i + "</td>");
+					html.push("<td>" + _item.displayName.value + "</td>");
+					html.push("<td></td>");
+					html.push("<td></td>");
+					html.push("<td></td>");
+					html.push("<td></td>");
+					html.push("<td></td>");
+					html.push("<td></td>");
+					html.push("<td></td>");
+					html.push("<td></td>");
+					html.push("<td></td>");
+					html.push("<td></td>");
+					html.push("<td></td>");
+					html.push("<td></td>");
+					html.push("<td></td>");
+					html.push("<td></td>");
+					html.push("<td></td>");
+					html.push("<td></td>");
+					html.push("<td></td>");
+					html.push("</tr>");
+					return html;
+				}
 			});
 	</script>		
 </head>
@@ -58,7 +132,8 @@
 		<input type="button" value="导出" />	
 		<input type="button" value="保存退出" />	
 		<input type="button" value="删除" />	
-		<input type="button" value="流程检测" />	
+		<input type="button" value="流程检测" />
+		<input type="hidden" value="同步流程图" id="sync" />	
 	</div>
 	<div id="toolbox">
 		<div id="toolbox_handle">工具集</div>
@@ -108,5 +183,35 @@
 	</div>
 
 	<div id="flow"></div>
+
+	<div id="flowInfoTable">
+		<table>
+			<thead>
+				<tr>
+					<th>流转次序</th>
+					<th>节点名称</th>
+					<th>主办人职务</th>
+					<th>协办人职务</th>
+					<th>驳回到</th>
+					<th>流转期限</th>
+					<th>可回复意见</th>
+					<th>查看意见</th>
+					<th>查看主办人意见</th>
+					<th>查看协办人意见</th>
+					<th>可插入附件</th>
+					<th>可查看附件</th>
+					<th>跟踪验收人</th>
+					<th>是否显示姓名</th>
+					<th>信息提醒下一步</th>
+					<th>隶属功能</th>
+					<th>和上一环节对话</th>
+					<th>审批是否需要身份确认</th>
+					<th>填写说明</th>
+				</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
 </body>
 </html>
