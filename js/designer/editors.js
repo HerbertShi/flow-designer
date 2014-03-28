@@ -19,6 +19,7 @@ $.extend(true, flow.editors, {
 			});
 		}
 	},
+	
 	readOnlyEditor : function(){
 		var _props,_k,_div,_src,_r;
 		this.init = function(props, k, div, src, r){
@@ -36,6 +37,42 @@ $.extend(true, flow.editors, {
 			});
 		}
 	},
+	textareaEditor : function(){
+		var _props,_k,_div,_src,_r;
+		this.init = function(props, k, div, src, r){
+			_props=props; _k=k; _div=div; _src=src; _r=r;
+			
+			$('<textarea style="width:98%;" rows="5"  />').val(props[_k].value).change(function(){
+				props[_k].value = $(this).val();
+			}).appendTo('#'+_div);
+			
+			$('#'+_div).data('editor', this);
+		}
+		this.destroy = function(){
+			$('#'+_div+' area').each(function(){
+				_props[_k].value = $(this).val();
+			});
+		}
+	},
+
+    checkEditor : function(){
+		var _props,_k,_div,_src,_r;
+		this.init = function(props, k, div, src, r){
+			_props=props; _k=k; _div=div; _src=src; _r=r;
+			
+			$('<input style="width:98%;" type="checkbox" />').val(props[_k].value).change(function(){
+				props[_k].value = $(this).val();
+			}).appendTo('#'+_div);
+			
+			$('#'+_div).data('editor', this);
+		}
+		this.destroy = function(){
+			$('#'+_div+' input').each(function(){
+				_props[_k].value = $(this).val();
+			});
+		}
+	},
+
 	selectEditor : function(arg){
 		var _props,_k,_div,_src,_r;
 		this.init = function(props, k, div, src, r){
