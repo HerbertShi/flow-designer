@@ -1,0 +1,47 @@
+@import url("reset.css");
+body {
+	margin: 0;
+	pading: 0;
+	text-align: left;
+	font-family: Arial, sans-serif, Helvetica, Tahoma;
+	font-size: 12px;
+	line-height: 1.5;
+	color: black;
+}
+
+/****************工具栏******************/
+.designer-toolBox{
+	border:1px solid #9AC3E1;
+	background-color: #fff;
+	width: 120px;
+	cursor: default;
+	padding: 3px;
+}
+
+.designer-toolBox .toolbox-handle{
+	border:1px solid #9AC3E1;
+	margin-top:1px;
+	margin-bottom:10px;
+	width:98%;
+	align:center;
+	text-align:center;
+	font-weight: bold;
+	background-color: #CDF07F;
+}
+.designer-toolBox .toolbox-node{
+	width: 120px;
+	border: 1px solid #fff;
+}
+
+.designer-toolBox .toolbox-node.active{
+	border: 1px solid #ddd;
+	background-color: #ddd;
+}
+
+.designer-toolBox .toolbox-node.selected{
+	background-color: #ddd;
+}
+
+.designer-toolBox .toolbox-node img{
+	margin-right: 10px;
+}
