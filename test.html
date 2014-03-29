@@ -14,11 +14,59 @@
 
 	<script type="text/javascript">
 			$(function() {
+				var model = {
+					"node": [{
+						"attr": {
+							"width": 50,
+							"height": 50,
+							"r": 8,
+							"fill": "#F6F7FF",
+							"stroke": "#03689A",
+							"stroke-width": 2,
+							"heigth": 50,
+							"x": 661,
+							"y": 182
+						},
+						"text": {
+							"text": "开始节点",
+							"font-size": 13
+						},
+						"props": {
+							"name": {
+								"name": "name",
+								"label": "名称",
+								"value": ""
+							},
+							"displayName": {
+								"name": "displayName",
+								"label": "显示名称",
+								"value": ""
+							}
+						},
+						"showType": "image",
+						"type": "start",
+						"name": {
+							"text": "<<start>>"
+						},
+						"img": {
+							"src": "images/48/start_event_empty.png",
+							"width": 48,
+							"height": 48
+						},
+						"id": "rect1396106695242"
+					}]
+				};
 				$.designer.config.basePath = "js/designer/";
-				$("#flow").flow();
-				$("#toolBox").toolBox();
+				$.designer.config.flow = $("#flow").flow({
+					model:model
+				});
+				$.designer.config.toolBox = $("#toolBox").toolBox();
+
+				$("#save").click(function(){
+					$("#flow").data("node")[0].toJson();
+				});
 			});
-	</script>		
+	</script>
 </head>
 <body>
 	<div id="menu">

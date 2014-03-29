@@ -47,7 +47,8 @@
 				width: 1280,
 				height: 900
 			},
-			cssClass: "designer-flow"
+			cssClass: "designer-flow",
+			model:""
 		},
 		rect: {
 			attr: {
@@ -62,7 +63,6 @@
 				text: "状态",
 				"font-size": 13
 			},
-			margin: 5,
 			props: []
 		},
 		states:{}
@@ -78,20 +78,22 @@
 
 	designer.editors={};
 
-	flow.node = [];
-	flow.path = [];
-
 
 	flow.init = function(obj, option) {
 		option = JQ.extend(true, {},designer.config.flow, option);
+
 		JQ(obj)
 			.addClass(option.cssClass)
 			.css(option.attr);
 
-		var svg=Raphael(obj,JQ(obj).width(),JQ(obj).height());
+		var svg = Raphael(obj, JQ(obj).width(), JQ(obj).height()),
+			node = [];
 		JQ(svg)
 			.bind("addrect", function(e, type, attr) {
-				var rect = new flow.rect(this,JQ.extend(true, designer.config.states[type], attr));
+				var rect = new flow.rect(obj,this,JQ.extend(true, designer.config.states[type], attr));
+				node.push(rect);
+				JQ(obj).data("node",node);
+				rect.focus();
 			})
 			.bind("addpath", function() {
 
@@ -101,6 +103,8 @@
 			})
 			.bind("removerect", function() {
 
+			}).click(function(){
+				
 			});
 
 		JQ(obj).droppable({
@@ -114,39 +118,121 @@
 				}]);
 			}
 		});
+
+		if (option.model && option.model.node) {
+			JQ(option.model.node).each(function() {
+				var rect = new flow.rect(obj, svg, JQ.extend(true, {}, this));
+				node.push(rect);
+				JQ(obj).data("node", node);
+			});
+		}
 	};
 
-	flow.rect = function(svg, option) {
-		option = JQ.extend(true, {},designer.config.rect, option);
-		if(!option.id){
-			option.id = "rect"+designer.util.nextId();
+	flow.rect = function(obj, svg, option) {
+		option = JQ.extend(true, {}, designer.config.rect, option);
+		if (!option.id) {
+			option.id = "rect" + designer.util.nextId();
 		}
-		var block,text,node = svg.set(),
-			currentBX,currentBY,currentTX,currentTY;
+		var rect = this,
+			block, text, node = svg.set(),
+			blockAttr = {
+				x: option.attr.x,
+				y: option.attr.y,
+				width: option.attr.width,
+				height: option.attr.height
+			},
+			textAttr = {
+				x: option.attr.x + option.attr.width / 2,
+				y: option.attr.y + option.attr.height / 2
+			},
+			resizeLine = svg.path("M0 0L1 1").hide(),
+			resizePointH = 5,
+			resizePoint = {};
+
+		resizePoint.n=svg.rect(0,0,resizePointH,resizePointH).attr({fill:"#000",stroke:"#fff",cursor:"s-resize"}).hide()
+		resizePoint.nw=svg.rect(0,0,resizePointH,resizePointH).attr({fill:"#000",stroke:"#fff",cursor:"nw-resize"}).hide();
+		resizePoint.w=svg.rect(0,0,resizePointH,resizePointH).attr({fill:"#000",stroke:"#fff",cursor:"w-resize"}).hide();
+		resizePoint.sw=svg.rect(0,0,resizePointH,resizePointH).attr({fill:"#000",stroke:"#fff",cursor:"sw-resize"}).hide();
+		resizePoint.s=svg.rect(0,0,resizePointH,resizePointH).attr({fill:"#000",stroke:"#fff",cursor:"s-resize"}).hide();
+		resizePoint.se=svg.rect(0,0,resizePointH,resizePointH).attr({fill:"#000",stroke:"#fff",cursor:"se-resize"}).hide();
+		resizePoint.e=svg.rect(0,0,resizePointH,resizePointH).attr({fill:"#000",stroke:"#fff",cursor:"w-resize"}).hide();
+		resizePoint.ne=svg.rect(0,0,resizePointH,resizePointH).attr({fill:"#000",stroke:"#fff",cursor:"ne-resize"}).hide();
+
 		if (option.showType == "text") {
 			block = svg.rect().attr(option.attr);
-			text = 	svg.text(option.attr.x+option.attr.width/2,option.attr.y+option.attr.height/2).attr(option.text);
+			text = svg.text(textAttr.x, textAttr.y, option.text.text);
 		} else if (option.showType == "image") {
 			block = svg.image(designer.config.basePath + option.img.src).attr(option.attr);
-			text = 	svg.text(option.attr.x+option.attr.width/2,option.attr.y+option.attr.height/2).attr(option.text).hide();
+			text = svg.text(textAttr.x, textAttr.y, option.text.text).hide();
 		}
-		node.push(block,text)
-		node.drag(function(a,b,c,d) {
-			block.attr("x",currentBX+a);
-			block.attr("y",currentBY+b);
-			text.attr("x",currentTX+a);
-			text.attr("y",currentTY+b);
+
+		node.push(block, text);
+		node.drag(function(dx, dy) {
+			block.attr({
+				x: blockAttr.x + dx,
+				y: blockAttr.y + dy
+			});
+			text.attr({
+				x: textAttr.x + dx,
+				y: textAttr.y + dy
+			});
+			moveResize();
 		}, function() {
-			currentBX = block.attr("x");
-			currentBY = block.attr("y");
-			currentTX = text.attr("x");
-			currentTY = text.attr("y");
-			node.attr({opacity:0.5});
+			rect.focus();
+			node.attr({
+				opacity: 0.5
+			});
 		}, function() {
-			node.attr({opacity:1});
+			blockAttr.x = block.attr("x");
+			blockAttr.y = block.attr("y");
+			textAttr.x = text.attr("x");
+			textAttr.y = text.attr("y");
+			node.attr({
+				opacity: 1
+			});
 		});
 
-		
+		function moveResize() {
+			var attr = {
+				x: block.attr("x") - 5,
+				y: block.attr("y") - 5,
+				width: block.attr("width") + 10,
+				height: block.attr("height") + 10
+			};
+			resizeLine.attr({
+				path: "M" + attr.x + " " + attr.y + "L" + attr.x + " " + (attr.y + attr.height) + "L" + (attr.x + attr.width) + " " + (attr.y + attr.height) + "L" + (attr.x + attr.width) + " " + attr.y + "L" + attr.x + " " + attr.y
+			}).show();
+
+			resizePoint.n.attr({x:attr.x+attr.width/2-resizePointH/2,y:attr.y-resizePointH/2}).show();
+			resizePoint.nw.attr({x:attr.x-resizePointH/2,y:attr.y-resizePointH/2}).show();
+			resizePoint.w.attr({x:attr.x-resizePointH/2,y:attr.y-resizePointH/2+attr.height/2}).show();
+			resizePoint.sw.attr({x:attr.x-resizePointH/2,y:attr.y-resizePointH/2+attr.height}).show();
+			resizePoint.s.attr({x:attr.x-resizePointH/2+attr.width/2,y:attr.y-resizePointH/2+attr.height}).show();
+			resizePoint.se.attr({x:attr.x-resizePointH/2+attr.width,y:attr.y-resizePointH/2+attr.height}).show();
+			resizePoint.e.attr({x:attr.x-resizePointH/2+attr.width,y:attr.y-resizePointH/2+attr.height/2}).show();
+			resizePoint.ne.attr({x:attr.x-resizePointH/2+attr.width,y:attr.y-resizePointH/2}).show();
+		}
+
+		this.focus = function() {
+			for (var i = 0; i < JQ(obj).data("node").length; i++) {
+				JQ(obj).data("node")[i].blur();
+			}
+			moveResize();
+		};
+
+		this.blur = function() {
+			resizeLine.hide();
+			for (var i in resizePoint) {
+				resizePoint[i].hide();
+			}
+		};
+
+		this.toJson = function() {
+			var data = {};
+			console.log(JSON.stringify(JQ.extend(true, {}, option, {
+				attr: blockAttr
+			})));
+		};
 	};
 
 
@@ -178,6 +264,7 @@
 		JQ(obj).children(".toolbox-node.selectable").click(function() {
 			JQ(this).siblings().removeClass("selected");
 			JQ(this).addClass("selected");
+			JQ(obj).data("mode",JQ(this).attr("type"));
 		});
 		JQ(obj).children(".toolbox-node.state").draggable({
 			helper: "clone"
@@ -188,6 +275,8 @@
 			})
 			.addClass(option.cssClass)
 			.css(option.attr);
+
+		JQ(obj).children(".toolbox-node[type='select']").click();
 	}
 
 	JQ.fn.flow = function(option) {
