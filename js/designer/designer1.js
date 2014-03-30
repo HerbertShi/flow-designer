@@ -8,7 +8,8 @@
 			attr: {
 				left: 10,
 				top: 30,
-				position: "absolute"
+				position: "absolute",
+				zIndex:2
 			},
 			cssClass: "designer-toolBox",
 			handle: {
@@ -45,7 +46,8 @@
 				left: 0,
 				top: 0,
 				width: 1280,
-				height: 900
+				height: 900,
+				zIndex:1
 			},
 			cssClass: "designer-flow",
 			model:""
@@ -63,7 +65,57 @@
 				text: "状态",
 				"font-size": 13
 			},
-			props: []
+			props: {}
+		},
+		path: {
+			attr: {
+				path: {
+					path: "M10 10L100 100",
+					stroke: "#808080",
+					fill: "none",
+					"stroke-width": 2
+				},
+				arrow: {
+					path: "M10 10L10 10",
+					stroke: "#808080",
+					fill: "#808080",
+					"stroke-width": 2,
+					radius: 4
+				},
+				fromDot: {
+					width: 5,
+					height: 5,
+					stroke: "#fff",
+					fill: "#000",
+					cursor: "move",
+					"stroke-width": 2
+				},
+				toDot: {
+					width: 5,
+					height: 5,
+					stroke: "#fff",
+					fill: "#000",
+					cursor: "move",
+					"stroke-width": 2
+				},
+				bigDot: {
+					width: 5,
+					height: 5,
+					stroke: "#fff",
+					fill: "#000",
+					cursor: "move",
+					"stroke-width": 2
+				},
+				smallDot: {
+					width: 5,
+					height: 5,
+					stroke: "#fff",
+					fill: "#000",
+					cursor: "move",
+					"stroke-width": 3
+				}
+			},
+			props:{}
 		},
 		states:{}
 	};
@@ -87,51 +139,62 @@
 			.css(option.attr);
 
 		var svg = Raphael(obj, JQ(obj).width(), JQ(obj).height()),
-			node = [];
+			node = [],route=[];
 		JQ(svg)
-			.bind("addrect", function(e, type, attr) {
-				var rect = new flow.rect(obj,this,JQ.extend(true, designer.config.states[type], attr));
+			.bind("addnode", function(e, type, option) {
+			var rect = new flow.node(obj, this, JQ.extend(true, {}, designer.config.states[type], option));
 				node.push(rect);
 				JQ(obj).data("node",node);
 				rect.focus();
 			})
-			.bind("addpath", function() {
+			.bind("addroute", function(e, option) {
+			var path = new flow.path(obj, this, option);
+				route.push(path);
+				JQ(obj).data("route", route);
+			})
+			.bind("removeroute", function() {
 
 			})
-			.bind("removepath", function() {
+			.bind("removenode", function() {
 
 			})
-			.bind("removerect", function() {
-
-			}).click(function(){
-				
+			.bind("click",function(e,x,y){
+				if(!this.getElementByPoint(x,y) && JQ(obj).data("node")){
+					for (var i = 0; i < JQ(obj).data("node").length; i++) {
+						JQ(obj).data("node")[i].blur();
+					}
+					JQ(obj).data("currentNode",null);
+				}
 			});
 
 		JQ(obj).droppable({
 			accept: ".state",
 			drop: function(event, ui) {
-				JQ(svg).trigger("addrect", [ui.helper.attr("type"), {
+				JQ(svg).trigger("addnode", [ui.helper.attr("type"), {
 					attr: {
 						x: ui.helper.offset().left - JQ(this).offset().left,
 						y: ui.helper.offset().top - JQ(this).offset().top
 					}
 				}]);
 			}
+		}).click(function(e){
+			JQ(svg).trigger("click",[e.clientX,e.clientY])
 		});
 
 		if (option.model && option.model.node) {
 			JQ(option.model.node).each(function() {
-				var rect = new flow.rect(obj, svg, JQ.extend(true, {}, this));
+				var rect = new flow.node(obj, svg, JQ.extend(true, {}, this));
 				node.push(rect);
 				JQ(obj).data("node", node);
 			});
 		}
 	};
 
-	flow.rect = function(obj, svg, option) {
+	flow.node = function(obj, svg, option) {
 		option = JQ.extend(true, {}, designer.config.rect, option);
 		if (!option.id) {
-			option.id = "rect" + designer.util.nextId();
+			option.id = "node" + designer.util.nextId();
+			option.props.id.value = option.id;
 		}
 		var rect = this,
 			block, text, node = svg.set(),
@@ -218,6 +281,15 @@
 				JQ(obj).data("node")[i].blur();
 			}
 			moveResize();
+			if (JQ(obj).data("currentNode") != null && designer.config.toolBoxInstance.data("mode") == "transition") {
+				JQ(svg).trigger("addroute", {
+					props: {
+						from: JQ(obj).data("currentNode").getId(),
+						to: rect.getId()
+					}
+				});
+			}
+			JQ(obj).data("currentNode",this);
 		};
 
 		this.blur = function() {
@@ -229,12 +301,43 @@
 
 		this.toJson = function() {
 			var data = {};
-			console.log(JSON.stringify(JQ.extend(true, {}, option, {
+			return JQ.extend(true, {}, option, {
 				attr: blockAttr
-			})));
+			});
 		};
+
+		this.getId = function(){
+			return option.id;
+		}
 	};
 
+	flow.path = function(obj, svg, option) {
+		option = JQ.extend(true, {}, designer.config.path, option);
+		if(option.props.from == option.props.to){
+			return;
+		}
+		if (JQ(obj).data("route")) {
+			for (var i = 0; i < JQ(obj).data("route").length; i++) {
+				var routeAttr = JQ(obj).data("route")[i].toJson();
+				if (routeAttr.props.from == option.props.from && routeAttr.props.to == option.props.to) {
+					return;
+				}
+			}
+		}
+		if (!option.id) {
+			option.id = "route" + designer.util.nextId();
+			
+		}
+
+		var path = this,
+			line, arrow, route = svg.set();
+
+
+
+		this.toJson = function() {
+			return JQ.extend(true, {}, option);
+		};
+	};
 
 	toolBox.init = function(obj, option) {
 		option = JQ.extend(true, {},designer.config.toolBox, option);
@@ -267,7 +370,10 @@
 			JQ(obj).data("mode",JQ(this).attr("type"));
 		});
 		JQ(obj).children(".toolbox-node.state").draggable({
-			helper: "clone"
+			helper: "clone",
+			start: function() {
+				JQ(obj).children(".toolbox-node[type='select']").click();
+			}
 		});
 		JQ(obj)
 			.draggable({

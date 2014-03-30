@@ -21,9 +21,9 @@
 				heigth: 50
 			},
 			props: {
-				name: {
-					name: 'name',
-					label: '名称',
+				id: {
+					name: 'id',
+					label: '编号',
 					value: '',
 					editor: function() {
 						return new designer.editors.readOnlyEditor();
@@ -58,9 +58,9 @@
 				heigth: 50
 			},
 			props: {
-				name: {
-					name: 'name',
-					label: '名称',
+				id: {
+					name: 'id',
+					label: '编号',
 					value: '',
 					editor: function() {
 						return new designer.editors.readOnlyEditor();
@@ -91,9 +91,9 @@
 				height: 48
 			},
 			props: {
-				name: {
-					name: 'name',
-					label: '名称',
+				id: {
+					name: 'id',
+					label: '编号',
 					value: '',
 					editor: function() {
 						return new designer.editors.readOnlyEditor();
@@ -249,9 +249,9 @@
 				height: 48
 			},
 			props: {
-				name: {
-					name: 'name',
-					label: '名称',
+				id: {
+					name: 'id',
+					label: '编号',
 					value: '',
 					editor: function() {
 						return new designer.editors.readOnlyEditor();

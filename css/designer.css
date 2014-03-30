@@ -16,6 +16,7 @@ body {
 	width: 120px;
 	cursor: default;
 	padding: 3px;
+	z-index:2;
 }
 #toolbox_handle {
 	border:1px solid #9AC3E1;
