@@ -15,56 +15,23 @@
 	<script type="text/javascript">
 			$(function() {
 				var model = "";
-				// var model = {
-				// 	"node": [{
-				// 		"attr": {
-				// 			"width": 50,
-				// 			"height": 50,
-				// 			"r": 8,
-				// 			"fill": "#F6F7FF",
-				// 			"stroke": "#03689A",
-				// 			"stroke-width": 2,
-				// 			"heigth": 50,
-				// 			"x": 515,
-				// 			"y": 117
-				// 		},
-				// 		"text": {
-				// 			"text": "开始节点",
-				// 			"font-size": 13
-				// 		},
-				// 		"props": {
-				// 			"id": {
-				// 				"name": "id",
-				// 				"label": "编号",
-				// 				"value": "rect1396142345771"
-				// 			},
-				// 			"displayName": {
-				// 				"name": "displayName",
-				// 				"label": "显示名称",
-				// 				"value": ""
-				// 			}
-				// 		},
-				// 		"showType": "image",
-				// 		"type": "start",
-				// 		"name": {
-				// 			"text": "<<start>>"
-				// 		},
-				// 		"img": {
-				// 			"src": "images/48/start_event_empty.png",
-				// 			"width": 48,
-				// 			"height": 48
-				// 		},
-				// 		"id": "rect1396142345771"
-				// 	}]
-				// };
+	// var model = {"node":[{"attr":{"width":50,"height":50,"r":8,"fill":"#F6F7FF","stroke":"#03689A","stroke-width":2,"heigth":50,"x":342,"y":90},"text":{"text":"开始节点","font-size":13},"props":{"id":{"name":"id","label":"编号","value":"node1396168985319"},"displayName":{"name":"displayName","label":"显示名称","value":""}},"showType":"image","type":"start","name":{"text":"<<start>>"},"img":{"src":"images/48/start_event_empty.png","width":48,"height":48},"id":"node1396168985319"},{"attr":{"width":50,"height":50,"r":8,"fill":"#F6F7FF","stroke":"#03689A","stroke-width":2,"heigth":50,"x":583,"y":44},"text":{"text":"结束节点","font-size":13},"props":{"id":{"name":"id","label":"编号","value":"node1396168986342"},"displayName":{"name":"displayName","label":"显示名称","value":""}},"showType":"image","type":"end","name":{"text":"<<end>>"},"img":{"src":"images/48/end_event_terminate.png","width":48,"height":48},"id":"node1396168986342"},{"attr":{"width":100,"height":50,"r":8,"fill":"#F6F7FF","stroke":"#03689A","stroke-width":2,"x":500,"y":215},"text":{"text":"任务节点","font-size":13},"props":{"id":{"name":"id","label":"编号","value":"node1396168987309"},"displayName":{"name":"displayName","label":"显示名称","value":""},"assignee":{"name":"assignee","label":"参与者","value":""},"performType":{"name":"performType","label":"驳回到","value":""},"flowDate":{"name":"flowDate","label":"流转期限","value":""},"submitLogic":{"name":"submitLogic","label":"提交逻辑","value":""},"replyOpinion":{"name":"replyOpinion","label":"可回复意见","value":""},"checkOtherOpinion":{"name":"checkOtherOpinion","label":"可否查看他人意见","value":""},"insertEmail":{"name":"insertEmail","label":"可插入邮件","value":""},"checkAttachment":{"name":"checkAttachment","label":"可否查看附件","value":""},"trackAccepter":{"name":"trackAccepter","label":"跟踪验收人","value":""},"isUseTrueName":{"name":"isUseTrueName","label":"是否现实姓名","value":""},"promptNext":{"name":"promptNext","label":"信息提示下一步","value":""},"approvedIsNeedIdentityConfirm":{"name":"approvedIsNeedIdentityConfirm","label":"审批是否需要身份确认","value":""},"fillInstruction":{"name":"fillInstruction","label":"填写说明","value":""}},"showType":"text","type":"task","name":{"text":"<<task>>"},"img":{"src":"images/48/task_empty.png","width":48,"height":48},"id":"node1396168987309"}],"route":[{"attr":{"path":{"path":"M396.9999999999998 135.49180327868712L506.0800000000022 210.00000000000105","stroke":"#808080","fill":"none","stroke-width":2},"arrow":{"path":"M506.0800000000022 210.00000000000105L503.07938209101366 203.75529887310498L499.1716212305746 209.47626077278764Z","stroke":"#808080","fill":"#808080","stroke-width":2,"radius":4},"fromDot":{"width":5,"height":5,"stroke":"#fff","fill":"#000","cursor":"move","stroke-width":2},"toDot":{"width":5,"height":5,"stroke":"#fff","fill":"#000","cursor":"move","stroke-width":2},"bigDot":{"width":5,"height":5,"stroke":"#fff","fill":"#000","cursor":"move","stroke-width":2},"smallDot":{"width":5,"height":5,"stroke":"#fff","fill":"#000","cursor":"move","stroke-width":3}},"props":{"from":"node1396168985319","to":"node1396168987309"},"id":"route1396168988879"},{"attr":{"path":{"path":"M560.1754385964925 210.00000000000082L597.8245614035081 98.99999999999999","stroke":"#808080","fill":"none","stroke-width":2},"arrow":{"path":"M597.8245614035081 98.99999999999999L592.6167807894353 103.5693567463799L599.1778501177905 105.7947486823131Z","stroke":"#808080","fill":"#808080","stroke-width":2,"radius":4},"fromDot":{"width":5,"height":5,"stroke":"#fff","fill":"#000","cursor":"move","stroke-width":2},"toDot":{"width":5,"height":5,"stroke":"#fff","fill":"#000","cursor":"move","stroke-width":2},"bigDot":{"width":5,"height":5,"stroke":"#fff","fill":"#000","cursor":"move","stroke-width":2},"smallDot":{"width":5,"height":5,"stroke":"#fff","fill":"#000","cursor":"move","stroke-width":3}},"props":{"from":"node1396168987309","to":"node1396168986342"},"id":"route1396168990574"},{"attr":{"path":{"path":"M577.9999999999997 74.72614107883814L396.9999999999997 109.27385892116152","stroke":"#808080","fill":"none","stroke-width":2},"arrow":{"path":"M396.9999999999997 109.27385892116152L403.5430757719833 111.55161207769137L402.24412998309657 104.7462656620022Z","stroke":"#808080","fill":"#808080","stroke-width":2,"radius":4},"fromDot":{"width":5,"height":5,"stroke":"#fff","fill":"#000","cursor":"move","stroke-width":2},"toDot":{"width":5,"height":5,"stroke":"#fff","fill":"#000","cursor":"move","stroke-width":2},"bigDot":{"width":5,"height":5,"stroke":"#fff","fill":"#000","cursor":"move","stroke-width":2},"smallDot":{"width":5,"height":5,"stroke":"#fff","fill":"#000","cursor":"move","stroke-width":3}},"props":{"from":"node1396168986342","to":"node1396168985319"},"id":"route1396168992418"}]} ;
 				$.designer.config.basePath = "js/designer/";
-				$.designer.config.flowInstance = $("#flow").flow({
-					model:model
+				$.designer.config.toolBoxInstance = $("#toolBox");
+				$.designer.config.flowInstance = $("#flow");
+				$("#toolBox").toolBox();
+				$("#flow").flow({
+					model: model
 				});
-				$.designer.config.toolBoxInstance = $("#toolBox").toolBox();
-
 				$("#save").click(function(){
-					$("#flow").data("node")[0].toJson();
+					var data = {node:[],route:[]};
+					for(var i=0;i<$("#flow").data("node").length;i++){
+						data.node.push($("#flow").data("node")[i].toJson());
+					}
+					for(var i=0;i<$("#flow").data("route").length;i++){
+						data.route.push($("#flow").data("route")[i].toJson());
+					}
+					console.log(JSON.stringify(data));
 				});
 			});
 	</script>

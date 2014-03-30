@@ -121,6 +121,13 @@
 	};
 
 	designer.util = {
+		isLine: function(object) {
+			if(object.getId().indexOf("route") == 0){
+				return true;
+			}else{
+				return false;
+			}
+		},
 		nextId:(function(){
 			return function(){
 				return (new Date()).getTime();
@@ -137,13 +144,6 @@
 			var j = f - radius * Math.sin((g + 120) * (Math.PI / 180));
 			var c = h + radius * Math.cos((g + 240) * (Math.PI / 180));
 			var i = f - radius * Math.sin((g + 240) * (Math.PI / 180));
-			// return [aPoint, {
-			// 	x: e,
-			// 	y: j
-			// }, {
-			// 	x: c,
-			// 	y: i
-			// }]
 			return "M" + aPoint.x + " " + aPoint.y + "L" + e + " " + j + "L" + c + " " + i + "Z";
 		}
 	};
@@ -158,43 +158,44 @@
 			.addClass(option.cssClass)
 			.css(option.attr);
 
-		var svg = Raphael(obj, JQ(obj).width(), JQ(obj).height()),
-			node = [],route=[];
+		var svg = Raphael(obj, JQ(obj).width(), JQ(obj).height());
+
+		JQ(obj).data("node",[]);
+		JQ(obj).data("route",[]);
+
 		JQ(svg)
 			.bind("addnode", function(e, type, option) {
 			var rect = new flow.node(obj, this, JQ.extend(true, {}, designer.config.states[type], option));
-				node.push(rect);
-				JQ(obj).data("node",node);
+				JQ(obj).data("node").push(rect);
 				rect.focus();
 			})
 			.bind("addroute", function(e, option) {
-			if (option.props.from == option.props.to) {
-				return;
-			}
-			if (JQ(obj).data("route")) {
-				for (var i = 0; i < JQ(obj).data("route").length; i++) {
-					var routeAttr = JQ(obj).data("route")[i].toJson();
-					if (routeAttr.props.from == option.props.from && routeAttr.props.to == option.props.to) {
-						return;
+				if (option.props.from == option.props.to) {
+					return;
+				}
+				if (JQ(obj).data("route")) {
+					for (var i = 0; i < JQ(obj).data("route").length; i++) {
+						var routeAttr = JQ(obj).data("route")[i].toJson();
+						if (routeAttr.props.from == option.props.from && routeAttr.props.to == option.props.to) {
+							return;
+						}
 					}
 				}
-			}
-			var path = new flow.path(obj, this, option);
-				route.push(path);
-				JQ(obj).data("route", route);
+				var path = new flow.path(obj, this, option);
+				JQ(obj).data("route").push(path);
 			})
-			.bind("removeroute", function() {
-
-			})
-			.bind("removenode", function() {
-
+			.bind("removeobject", function() {
+				JQ(obj).data("currentObject").remove();
 			})
 			.bind("click",function(e,x,y){
 				if(!this.getElementByPoint(x,y) && JQ(obj).data("node")){
 					for (var i = 0; i < JQ(obj).data("node").length; i++) {
 						JQ(obj).data("node")[i].blur();
 					}
-					JQ(obj).data("currentNode",null);
+					for (var i = 0; i < JQ(obj).data("route").length; i++) {
+						JQ(obj).data("route")[i].blur();
+					}
+					JQ(obj).data("currentObject",null);
 				}
 			});
 
@@ -208,15 +209,27 @@
 					}
 				}]);
 			}
-		}).click(function(e){
-			JQ(svg).trigger("click",[e.clientX,e.clientY])
+		}).click(function(e) {
+			JQ(svg).trigger("click", [e.clientX, e.clientY])
+		});
+		JQ(document).keydown(function(e) {
+			if (e.keyCode == 46) {
+				var currentObject = JQ(obj).data("currentObject");
+				if (currentObject != null) {
+					JQ(svg).trigger("removeobject");
+				}
+			}
 		});
 
 		if (option.model && option.model.node) {
 			JQ(option.model.node).each(function() {
 				var rect = new flow.node(obj, svg, JQ.extend(true, {}, this));
-				node.push(rect);
-				JQ(obj).data("node", node);
+				JQ(obj).data("node").push(rect);
+			});
+
+			JQ(option.model.route).each(function() {
+				var path = new flow.path(obj, svg, JQ.extend(true, {}, this));
+				JQ(obj).data("route").push(path);
 			});
 		}
 	};
@@ -317,16 +330,22 @@
 			for (var i = 0; i < JQ(obj).data("node").length; i++) {
 				JQ(obj).data("node")[i].blur();
 			}
+			for (var i = 0; i < JQ(obj).data("route").length; i++) {
+				JQ(obj).data("route")[i].blur();
+			}
 			moveResize();
-			if (JQ(obj).data("currentNode") != null && designer.config.toolBoxInstance.data("mode") == "transition") {
+			if (JQ(obj).data("currentObject") != null && 
+				!designer.util.isLine(JQ(obj).data("currentObject")) && 
+				!designer.util.isLine(rect) && 
+				designer.config.toolBoxInstance.data("mode") == "transition") {
 				JQ(svg).trigger("addroute", {
 					props: {
-						from: JQ(obj).data("currentNode").getId(),
+						from: JQ(obj).data("currentObject").getId(),
 						to: rect.getId()
 					}
 				});
 			}
-			JQ(obj).data("currentNode",this);
+			JQ(obj).data("currentObject", rect);
 		};
 
 		this.blur = function() {
@@ -364,6 +383,34 @@
 			return "M" + p.x + " " + p.y + "L" + p.x + " " + (p.y + p.height) + "L" + (p.x + p.width) + " " + (p.y + p.height) + "L" + (p.x + p.width) + " " + p.y + "L" + p.x + " " + p.y;
 		};
 
+		this.remove = function() {
+			var result = [];
+			for (var i = 0; i < JQ(obj).data("node").length; i++) {
+				if(JQ(obj).data("node")[i].getId() == rect.getId()){
+				}else{
+					result.push(JQ(obj).data("node")[i]);
+				}
+			}
+			JQ(obj).data("node",result);
+
+			var linkRoute = [];
+			for (var i = 0; i < JQ(obj).data("route").length; i++) {
+				if (JQ(obj).data("route")[i].getFromNodeId() == rect.getId() || JQ(obj).data("route")[i].getToNodeId() == rect.getId()) {
+					linkRoute.push(JQ(obj).data("route")[i]);
+				}
+			}
+			
+			for (var i = 0; i < linkRoute.length; i++) {
+				linkRoute[i].remove();
+			}
+
+			node.remove();
+			resizeLine.remove();
+			for (var i in resizePoint) {
+				resizePoint[i].remove();
+			}
+		};
+
 		JQ(rect).data("route",[]);
 	};
 
@@ -391,7 +438,19 @@
 		line = svg.path().attr(option.attr.path);
 		arrow = svg.path().attr(option.attr.arrow);
 		route.push(line,arrow);
-		
+
+		route.drag(function(dx, dy) {
+
+		}, function() {
+			path.focus();
+		}, function() {
+
+		});
+
+		var resizeDot = {};
+		resizeDot.fromDot = svg.rect().attr(option.attr.fromDot).hide();
+		resizeDot.toDot = svg.rect().attr(option.attr.toDot).hide();
+
 		function build() {
 			var centerLine = designer.util.connPoint(fromNode.getCenterPoint(), toNode.getCenterPoint());
 			var fromPoint = Raphael.pathIntersection(centerLine, fromNode.getResizePath());
@@ -399,6 +458,14 @@
 			if (fromPoint.length > 0 && toPoint.length > 0) {
 				fromPoint = fromPoint[0];
 				toPoint = toPoint[0];
+				var _fromDot = {
+					x: fromPoint.x - option.attr.fromDot.width / 2,
+					y: fromPoint.y - option.attr.fromDot.height / 2,
+				};
+				var _toDot = {
+					x: toPoint.x - option.attr.toDot.width / 2,
+					y: toPoint.y - option.attr.toDot.height / 2,
+				};
 				var linePath = designer.util.connPoint(fromPoint, toPoint);
 				var arrowPoint = Raphael.getPointAtLength(linePath, Raphael.getTotalLength(linePath) - 5);
 				option.attr = JQ.extend(true, {}, option.attr, {
@@ -407,7 +474,9 @@
 					},
 					arrow: {
 						path: designer.util.arrow(toPoint, arrowPoint, option.attr.arrow.radius)
-					}
+					},
+					fromDot: _fromDot,
+					toDot: _toDot
 				});
 			}
 		}
@@ -416,10 +485,59 @@
 			build();
 			line.attr(option.attr.path);
 			arrow.attr(option.attr.arrow);
-		}
+			resizeDot.fromDot.attr(option.attr.fromDot);
+			resizeDot.toDot.attr(option.attr.toDot);
+		};
+
+		this.focus = function(){
+			for (var i = 0; i < JQ(obj).data("node").length; i++) {
+				JQ(obj).data("node")[i].blur();
+			}
+			for (var i = 0; i < JQ(obj).data("route").length; i++) {
+				JQ(obj).data("route")[i].blur();
+			}
+			for (var i in resizeDot) {
+				resizeDot[i].show();
+			}
+			JQ(obj).data("currentObject", path);
+		};
+
+		this.blur = function(){
+			for (var i in resizeDot) {
+				resizeDot[i].hide();
+			}
+		};
 
 		this.toJson = function() {
 			return JQ.extend(true, {}, option);
+		};
+
+		this.getId = function(){
+			return option.id;
+		};
+
+		this.getFromNodeId = function(){
+			return option.props.from;
+		};
+
+		this.getToNodeId = function(){
+			return option.props.to;
+		};
+
+		this.remove = function() {
+			var result = [];
+			for (var i = 0; i < JQ(obj).data("route").length; i++) {
+				if(JQ(obj).data("route")[i].getId() == path.getId()){
+					
+				}else{
+					result.push(JQ(obj).data("route")[i]);
+				}
+			}
+			JQ(obj).data("route",result);
+			route.remove();
+			for (var i in resizeDot) {
+				resizeDot[i].remove();
+			}
 		};
 
 		JQ(fromNode).data("route").push(this);
@@ -457,7 +575,7 @@
 			JQ(this).siblings().removeClass("selected");
 			JQ(this).addClass("selected");
 			JQ(obj).data("mode",JQ(this).attr("type"));
-			designer.config.flowInstance.data("currentNode",null);
+			designer.config.flowInstance.data("currentObject",null);
 		});
 		JQ(obj).children(".toolbox-node.state").draggable({
 			helper: "clone",
