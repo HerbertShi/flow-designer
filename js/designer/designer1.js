@@ -125,7 +125,27 @@
 			return function(){
 				return (new Date()).getTime();
 			}
-		})()
+		})(),
+		connPoint: function(p1, p2) {
+			return "M" + p1.x + " " + p1.y + "L" + p2.x + " " + p2.y;
+		},
+		arrow: function(aPoint, bPoint, radius) {
+			var g = Math.atan2(bPoint.y - aPoint.y, aPoint.x - bPoint.x) * (180 / Math.PI);
+			var h = aPoint.x - radius * Math.cos(g * (Math.PI / 180));
+			var f = aPoint.y + radius * Math.sin(g * (Math.PI / 180));
+			var e = h + radius * Math.cos((g + 120) * (Math.PI / 180));
+			var j = f - radius * Math.sin((g + 120) * (Math.PI / 180));
+			var c = h + radius * Math.cos((g + 240) * (Math.PI / 180));
+			var i = f - radius * Math.sin((g + 240) * (Math.PI / 180));
+			// return [aPoint, {
+			// 	x: e,
+			// 	y: j
+			// }, {
+			// 	x: c,
+			// 	y: i
+			// }]
+			return "M" + aPoint.x + " " + aPoint.y + "L" + e + " " + j + "L" + c + " " + i + "Z";
+		}
 	};
 
 	designer.editors={};
@@ -148,6 +168,17 @@
 				rect.focus();
 			})
 			.bind("addroute", function(e, option) {
+			if (option.props.from == option.props.to) {
+				return;
+			}
+			if (JQ(obj).data("route")) {
+				for (var i = 0; i < JQ(obj).data("route").length; i++) {
+					var routeAttr = JQ(obj).data("route")[i].toJson();
+					if (routeAttr.props.from == option.props.from && routeAttr.props.to == option.props.to) {
+						return;
+					}
+				}
+			}
 			var path = new flow.path(obj, this, option);
 				route.push(path);
 				JQ(obj).data("route", route);
@@ -256,16 +287,16 @@
 		});
 
 		function moveResize() {
+			resizeLine.attr({
+				path: rect.getResizePath()
+			}).show();
+
 			var attr = {
 				x: block.attr("x") - 5,
 				y: block.attr("y") - 5,
 				width: block.attr("width") + 10,
 				height: block.attr("height") + 10
 			};
-			resizeLine.attr({
-				path: "M" + attr.x + " " + attr.y + "L" + attr.x + " " + (attr.y + attr.height) + "L" + (attr.x + attr.width) + " " + (attr.y + attr.height) + "L" + (attr.x + attr.width) + " " + attr.y + "L" + attr.x + " " + attr.y
-			}).show();
-
 			resizePoint.n.attr({x:attr.x+attr.width/2-resizePointH/2,y:attr.y-resizePointH/2}).show();
 			resizePoint.nw.attr({x:attr.x-resizePointH/2,y:attr.y-resizePointH/2}).show();
 			resizePoint.w.attr({x:attr.x-resizePointH/2,y:attr.y-resizePointH/2+attr.height/2}).show();
@@ -274,6 +305,12 @@
 			resizePoint.se.attr({x:attr.x-resizePointH/2+attr.width,y:attr.y-resizePointH/2+attr.height}).show();
 			resizePoint.e.attr({x:attr.x-resizePointH/2+attr.width,y:attr.y-resizePointH/2+attr.height/2}).show();
 			resizePoint.ne.attr({x:attr.x-resizePointH/2+attr.width,y:attr.y-resizePointH/2}).show();
+
+			if (JQ(rect).data("route").length > 0) {
+				for (var i = 0; i < JQ(rect).data("route").length; i++) {
+					JQ(rect).data("route")[i].render();
+				}
+			}
 		}
 
 		this.focus = function() {
@@ -308,35 +345,87 @@
 
 		this.getId = function(){
 			return option.id;
-		}
+		};
+
+		this.getCenterPoint = function() {
+			return {
+				x: block.attr("x") + block.attr("width") / 2,
+				y: block.attr("y") + block.attr("height") / 2
+			};
+		};
+
+		this.getResizePath = function() {
+			var p = {
+				x: block.attr("x") - 5,
+				y: block.attr("y") - 5,
+				width: block.attr("width") + 10,
+				height: block.attr("height") + 10
+			};
+			return "M" + p.x + " " + p.y + "L" + p.x + " " + (p.y + p.height) + "L" + (p.x + p.width) + " " + (p.y + p.height) + "L" + (p.x + p.width) + " " + p.y + "L" + p.x + " " + p.y;
+		};
+
+		JQ(rect).data("route",[]);
 	};
 
 	flow.path = function(obj, svg, option) {
 		option = JQ.extend(true, {}, designer.config.path, option);
-		if(option.props.from == option.props.to){
-			return;
-		}
-		if (JQ(obj).data("route")) {
-			for (var i = 0; i < JQ(obj).data("route").length; i++) {
-				var routeAttr = JQ(obj).data("route")[i].toJson();
-				if (routeAttr.props.from == option.props.from && routeAttr.props.to == option.props.to) {
-					return;
-				}
-			}
-		}
-		if (!option.id) {
-			option.id = "route" + designer.util.nextId();
-			
-		}
 
 		var path = this,
-			line, arrow, route = svg.set();
+			line, arrow, route = svg.set(),
+			fromNode,toNode;
 
+		for (var i = 0; i < JQ(obj).data("node").length; i++) {
+			if(JQ(obj).data("node")[i].getId() == option.props.from){
+				fromNode = JQ(obj).data("node")[i];
+			}
+			if(JQ(obj).data("node")[i].getId() == option.props.to){
+				toNode = JQ(obj).data("node")[i];
+			}
+		}
 
+		if (!option.id) {
+			option.id = "route" + designer.util.nextId();
+			build();
+		}
+
+		line = svg.path().attr(option.attr.path);
+		arrow = svg.path().attr(option.attr.arrow);
+		route.push(line,arrow);
+		
+		function build() {
+			var centerLine = designer.util.connPoint(fromNode.getCenterPoint(), toNode.getCenterPoint());
+			var fromPoint = Raphael.pathIntersection(centerLine, fromNode.getResizePath());
+			var toPoint = Raphael.pathIntersection(centerLine, toNode.getResizePath());
+			if (fromPoint.length > 0 && toPoint.length > 0) {
+				fromPoint = fromPoint[0];
+				toPoint = toPoint[0];
+				var linePath = designer.util.connPoint(fromPoint, toPoint);
+				var arrowPoint = Raphael.getPointAtLength(linePath, Raphael.getTotalLength(linePath) - 5);
+				option.attr = JQ.extend(true, {}, option.attr, {
+					path: {
+						path: linePath
+					},
+					arrow: {
+						path: designer.util.arrow(toPoint, arrowPoint, option.attr.arrow.radius)
+					}
+				});
+			}
+		}
+
+		this.render = function(){
+			build();
+			line.attr(option.attr.path);
+			arrow.attr(option.attr.arrow);
+		}
 
 		this.toJson = function() {
 			return JQ.extend(true, {}, option);
 		};
+
+		JQ(fromNode).data("route").push(this);
+		JQ(toNode).data("route").push(this);
+
+		$.designer.config.toolBoxInstance.children(".toolbox-node[type='select']").click();
 	};
 
 	toolBox.init = function(obj, option) {
@@ -368,6 +457,7 @@
 			JQ(this).siblings().removeClass("selected");
 			JQ(this).addClass("selected");
 			JQ(obj).data("mode",JQ(this).attr("type"));
+			designer.config.flowInstance.data("currentNode",null);
 		});
 		JQ(obj).children(".toolbox-node.state").draggable({
 			helper: "clone",
