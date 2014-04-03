@@ -1,5 +1,5 @@
 (function(JQ) {
-	var flow = {}, toolBox = {},designer = {};
+	var flow = {}, toolBox = {}, prop = {} ,flowInfoTable={},designer = {};
 
 	designer.config = {
 		basePath:"",
@@ -115,6 +115,18 @@
 					"stroke-width": 3
 				}
 			},
+			props:{
+				
+			}
+		},
+		props:{
+			attr:{
+				  top:500,
+				  left:15,
+				  position: "absolute",
+				  zIndex:2
+			     },
+			cssClass: "designer-prop",     
 			props:{}
 		},
 		states:{}
@@ -163,11 +175,21 @@
 		JQ(obj).data("node",[]);
 		JQ(obj).data("route",[]);
 
+        var q={};
+        var g={};
+
 		JQ(svg)
 			.bind("addnode", function(e, type, option) {
 			var rect = new flow.node(obj, this, JQ.extend(true, {}, designer.config.states[type], option));
 				JQ(obj).data("node").push(rect);
+				
+				q[rect.getId()]=rect;
+				//console.log(q);
+				JQ("#sync").trigger("sync",{"node":q,"path":g});
+				
 				rect.focus();
+				 //触发flowToTable事件
+			//designer.config.flowInfoTableInstance.trigger("showTable",rect);
 			})
 			.bind("addroute", function(e, option) {
 				if (option.props.from == option.props.to) {
@@ -182,7 +204,11 @@
 					}
 				}
 				var path = new flow.path(obj, this, option);
+				
+				g[path.getId()]=path;
+				//console.log(g);
 				JQ(obj).data("route").push(path);
+				JQ("#sync").trigger("sync",{"node":q,"path":g});
 			})
 			.bind("removeobject", function() {
 				JQ(obj).data("currentObject").remove();
@@ -197,7 +223,9 @@
 					}
 					JQ(obj).data("currentObject",null);
 				}
+
 			});
+
 
 		JQ(obj).droppable({
 			accept: ".state",
@@ -346,6 +374,14 @@
 				});
 			}
 			JQ(obj).data("currentObject", rect);
+           
+			//触发prop出现事件
+			designer.config.propInstance.trigger("show",rect);
+
+			//designer.config.propInstance.trigger("show");
+
+			//designer.config.flowInfoTableInstance.empty();
+			//designer.config.flowInfoTableInstance.trigger("showTable",rect);
 		};
 
 		this.blur = function() {
@@ -353,6 +389,9 @@
 			for (var i in resizePoint) {
 				resizePoint[i].hide();
 			}
+
+			//触发prop消失事件
+			designer.config.propInstance.trigger("hide",rect);
 		};
 
 		this.toJson = function() {
@@ -410,6 +449,17 @@
 				resizePoint[i].remove();
 			}
 		};
+
+		this.setPropValue = function(propName,propValue){
+			option.props[propName].value = propValue;
+			
+			//console.log($(option.props[propName].value));
+			
+		};
+		this.setText=function(newText){
+			//option.text.text=newText;
+			text.attr("text",newText);	
+		}
 
 		JQ(rect).data("route",[]);
 	};
@@ -546,6 +596,54 @@
 		$.designer.config.toolBoxInstance.children(".toolbox-node[type='select']").click();
 	};
 
+	prop.init = function(obj, option) {
+		option = JQ.extend(true, {},designer.config.props, option);
+		var propContent = JQ(obj).find("#prop_tab");
+
+        var d= function(e, rect) {
+                JQ("#properties").show();
+                var props = rect.toJson().props;
+                for(var p in props){
+                	var prop = props[p];
+                	var content = JQ("<div></div>");
+                	content.append(prop.label);
+                	if(p=="displayName"){
+                		prop.editor().init(content,rect,prop);
+                	}else{
+                	prop.editor().init(content,rect,prop);
+                    } 
+                	content.appendTo(propContent);
+                }
+
+               /* var tBody=JQ(obj).find("#tbody");
+		        var num=0;
+		        var t_tr=JQ("<tr id='"+props.id.value+"'></tr>");
+			    for(var i in props){
+				     var prop=props[i];
+				    if(i=="id"){
+					   num++;
+					  t_tr.append("<td>"+num+"</td>")
+				    }else{
+				    t_tr.append("<td>"+prop.value+"</td>");
+			        }
+			    }
+			    t_tr.appendTo(tBody);*/
+				
+        }
+        var d1=function(e,rect){
+        	propContent.empty();
+        }
+		JQ(obj).bind("show",d);
+		JQ(obj).bind("hide",d1);
+		JQ(obj)
+			.draggable({
+				handle: ".prop_div"
+			})
+			.addClass(option.cssClass)
+			.css(option.attr);
+        //JQ("#properties").show();
+	};
+
 	toolBox.init = function(obj, option) {
 		option = JQ.extend(true, {},designer.config.toolBox, option);
 
@@ -591,7 +689,35 @@
 			.css(option.attr);
 
 		JQ(obj).children(".toolbox-node[type='select']").click();
-	}
+		
+	};
+
+	flowInfoTable.init=function(obj,option){
+
+
+		/*var tBody=JQ(obj).find("#tbody");
+		var num=0;
+		var d=function(e,rect){
+			var props=rect.toJson().props;
+			//console.log(props.id.value);
+			var t_tr=JQ("<tr id='"+props.id.value+"'></tr>");
+			for(var i in props){
+				var prop=props[i];
+				if(i=="id"){
+					num++;
+					t_tr.append("<td>"+num+"</td>")
+				}else{
+				    t_tr.append("<td>"+prop.value+"</td>");
+			    }
+
+			}
+			
+			t_tr.appendTo(tBody);
+		}
+		JQ(obj).bind("showTable",d);*/
+	};
+
+	
 
 	JQ.fn.flow = function(option) {
 		return this.each(function() {
@@ -602,6 +728,17 @@
 	JQ.fn.toolBox = function(option) {
 		return this.each(function() {
 			toolBox.init(this, option)
+		})
+	};
+
+	JQ.fn.prop = function(option){
+		return this.each(function() {
+			prop.init(this, option)
+		})
+	};
+	JQ.fn.flowInfoTable=function(option){
+		return this.each(function(){
+			flowInfoTable.init(this,option)
 		})
 	};
 

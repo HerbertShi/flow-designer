@@ -11,6 +11,7 @@
 
 	<script src="js/designer/designer1.js" type="text/javascript"></script>
 	<script src="js/designer/model1.js" type="text/javascript"></script>
+	<script src="js/designer/editors1.js" type="text/javascript"></script>
 
 	<script type="text/javascript">
 			$(function() {
@@ -19,10 +20,22 @@
 				$.designer.config.basePath = "js/designer/";
 				$.designer.config.toolBoxInstance = $("#toolBox");
 				$.designer.config.flowInstance = $("#flow");
+				$.designer.config.propInstance = $("#properties");
+				$.designer.config.flowInfoTableInstance=$("#flowInfoTable");
 				$("#toolBox").toolBox();
 				$("#flow").flow({
 					model: model
 				});
+				$("#properties").prop();
+				$("#flowInfoTable").flowInfoTable();
+
+				/*$("#properties_handle div").click(function(){
+					$("#properties_handle div").removeClass("active");
+					$(this).addClass("active");
+					$(".properties_all").hide();
+					$(".properties_all[type="+$(this).attr("type")+"]").show();
+				});*/
+
 				$("#save").click(function(){
 					var data = {node:[],route:[]};
 					for(var i=0;i<$("#flow").data("node").length;i++){
@@ -33,6 +46,93 @@
 					}
 					console.log(JSON.stringify(data));
 				});
+
+				$("#sync").bind("sync",function(e,i){
+					var q = i.node,g = i.path;
+					var node = [];
+					var path = [];
+					for(var qI in q){
+						if(q[qI]){
+							//node.push(eval("(" + q[qI].toJson() + ")"));
+							node.push(q[qI].toJson());
+						}
+					}
+					for(var gI in g){
+						if(g[gI]){
+							//path.push(eval("(" + g[gI].toJson() + ")"));
+							path.push(g[gI].toJson());
+						}
+					}
+					disposTable(node,path);
+				});
+
+				var nodeIndex = 0;
+				function disposTable(_node,_path){
+					$("#flowInfoTable tbody").empty();
+					nodeIndex =0;
+					for (var i = 0; i < _node.length; i++) {
+						if (_node[i].type == "start") {
+							nodeIndex++;
+							$("#flowInfoTable tbody").append(getNextNode(renderTable(nodeIndex,_node[i].props),_node[i].props.id.value).join(""));
+							break;
+						}
+					}
+
+					function getNoticeNode(){
+						
+					}
+
+					function getNextNode(_currentHtml,_startName) {
+							for(var i=0;i<_path.length;i++){
+								if(_path[i].props.from == _startName){
+									for(var j =0;j<_node.length;j++){
+										if (_node[j].props.id.value == _path[i].props.to) {
+											if (_node[j].type == "task") {
+												nodeIndex++;
+												return getNextNode(_currentHtml.concat(renderTable(nodeIndex,_node[j].props)),_node[j].props.id.value);
+											} else if (_node[j].type == "end") {
+												nodeIndex++;
+												return _currentHtml.concat(renderTable(nodeIndex,_node[j].props));
+											}
+										}
+									}
+								}
+							}
+							return _currentHtml;
+					}
+				}
+
+				function renderTable(_i,_item) {
+					var html = [];
+					var len=0;
+					for(var i in _item){
+						len++;
+					}
+					html.push("<tr id='" + _item.id.value + "'>");
+					html.push("<td>" + _i + "</td>");
+					html.push("<td name='"+_item.displayName.name+"'>" + _item.displayName.value + "</td>");
+					if(len>2){
+						html.push("<td name='"+_item.sponsorJob.name+"'>" + _item.sponsorJob.value + "</td>");
+					    html.push("<td></td>");
+					    html.push("<td name='"+_item.rejectTo.name+"'>" + _item.rejectTo.value + "</td>");
+					    html.push("<td name='"+_item.flowDate.name+"'>" + _item.flowDate.value + "</td>");
+					    html.push("<td name='"+_item.replyOpinion.name+"'>" + _item.replyOpinion.value + "</td>");
+					    html.push("<td name='"+_item.checkOpinion.name+"'>" + _item.checkOpinion.value + "</td>");
+					    html.push("<td name='"+_item.checkHostOpinion.name+"'>" + _item.checkHostOpinion.value + "</td>");
+					    html.push("<td name='"+_item.checkCooOpinion.name+"'>" + _item.checkCooOpinion.value + "</td>");
+					    html.push("<td name='"+_item.insertAttachment.name+"'>" + _item.insertAttachment.value + "</td>");
+					    html.push("<td name='"+_item.checkAttachment.name+"'>" + _item.checkAttachment.value + "</td>");
+					    html.push("<td name='"+_item.trackAccepter.name+"'>" + _item.trackAccepter.value + "</td>");
+					    html.push("<td name='"+_item.isShowTrueName.name+"'>" + _item.isShowTrueName.value + "</td>");
+					    html.push("<td name='"+_item.promptNext.name+"'>" + _item.promptNext.value + "</td>");
+					    html.push("<td name='"+_item.ownFunction.name+"'>" + _item.ownFunction.value + "</td>");
+					    html.push("<td name='"+_item.talkToPre.name+"'>" + _item.talkToPre.value + "</td>");
+					    html.push("<td name='"+_item.approvedIsNeedIdentityConfirm.name+"'>" + _item.approvedIsNeedIdentityConfirm.value + "</td>");
+					    html.push("<td name='"+_item.fillInstruction.name+"'>" + _item.fillInstruction.value + "</td>");
+					}
+					html.push("</tr>");
+					return html;
+				}
 			});
 	</script>
 </head>
@@ -49,8 +149,14 @@
 
 	<div id="toolBox"></div>
 
-	<div id="properties">
-		
+	<div id="properties" style="display:none;" class="prop_div" >
+		<div id="properties_handle">
+			<div id="property" type="property">属性</div>
+		</div>
+		<div id="prop_tab">
+
+		</div>
+		<div>&nbsp;</div>
 	</div>
 
 	<div id="flow"></div>
@@ -80,7 +186,7 @@
 					<th>填写说明</th>
 				</tr>
 			</thead>
-			<tbody>
+			<tbody id="tbody">
 			</tbody>
 		</table>
 	</div>

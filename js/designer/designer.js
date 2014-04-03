@@ -604,6 +604,7 @@
 			if(i&&i.getId()==o.getId()){
 				return
 			}
+			m;
 			i=o;
 			JQ(e).find(".editor").each(function(){
 				var k=JQ(this).data("editor");
@@ -657,6 +658,7 @@
 				}*/
 			}
 		};
+
 		JQ(g).bind("showprops",d)
 	};
 	designer.editors={
@@ -716,7 +718,9 @@
 					i.remove()
 				}
 			}
-
+			/*console.log(q);
+			console.log(g);
+			console.log("---------------------------");*/
 			JQ("#sync").trigger("sync",{"node":q,"path":g});
 		};
 		JQ(y).bind("removepath",w);
@@ -724,13 +728,13 @@
 		JQ(y).bind("addrect",function(j,c,k){
 			var i=new designer.rect(JQ.extend(true,{},designer.config.tools.states[c],k),y);
 			q[i.getId()]=i;
-
+			
 			JQ("#sync").trigger("sync",{"node":q,"path":g});
 		});
 		var f=function(i,k,j){
 			var c=new designer.path({},y,k,j);
 			g[c.getId()]=c;
-
+			
 			JQ("#sync").trigger("sync",{"node":q,"path":g});
 		};
 		JQ(y).bind("addpath",f);

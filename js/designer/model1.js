@@ -32,7 +32,7 @@
 				displayName: {
 					name: 'displayName',
 					label: '显示名称',
-					value: '',
+					value: '开始节点',
 					editor: function() {
 						return new designer.editors.textEditor();
 					}
@@ -69,9 +69,9 @@
 				displayName: {
 					name: 'displayName',
 					label: '显示名称',
-					value: '',
+					value: '结束节点',
 					editor: function() {
-						return new designer.editors.textEditor();
+						return new designer.editors.inputEditor();
 					}
 				}
 			}
@@ -102,21 +102,21 @@
 				displayName: {
 					name: 'displayName',
 					label: '显示名称',
-					value: '',
+					value: '任务节点',
 					editor: function() {
 						return new designer.editors.textEditor();
 					}
 				},
-				assignee: {
-					name: 'assignee',
-					label: '参与者',
-					value: '',
+				sponsorJob: {
+					name: 'sponsorJob',
+					label: '主办人职务',
+					value: '123',
 					editor: function() {
 						return new designer.editors.inputEditor();
 					}
 				},
-				performType: {
-					name: 'performType',
+				rejectTo: {
+					name: 'rejectTo',
 					label: '驳回到',
 					value: '',
 					editor: function() {
@@ -143,7 +143,7 @@
 						return new designer.editors.inputEditor();
 					}
 				},
-				submitLogic: {
+				/*submitLogic: {
 					name: 'submitLogic',
 					label: '提交逻辑',
 					value: '',
@@ -159,7 +159,7 @@
 
 						]);
 					}
-				},
+				},*/
 				replyOpinion: {
 					name: 'replyOpinion',
 					label: '可回复意见',
@@ -168,17 +168,33 @@
 						return new designer.editors.checkEditor();
 					}
 				},
-				checkOtherOpinion: {
-					name: 'checkOtherOpinion',
-					label: '可否查看他人意见',
+				checkOpinion: {
+					name: 'checkOpinion',
+					label: '查看意见',
 					value: '',
 					editor: function() {
 						return new designer.editors.checkEditor();
 					}
 				},
-				insertEmail: {
-					name: 'insertEmail',
-					label: '可插入邮件',
+				checkHostOpinion: {
+					name: 'checkHostOpinion',
+					label: '查看主办人意见',
+					value: '',
+					editor: function() {
+						return new designer.editors.checkEditor();
+					}
+				},
+				checkCooOpinion: {
+					name: 'checkCooOpinion',
+					label: '查看协办人意见',
+					value: '',
+					editor: function() {
+						return new designer.editors.checkEditor();
+					}
+				},
+				insertAttachment: {
+					name: 'insertAttachment',
+					label: '可插入附件',
 					value: '',
 					editor: function() {
 						return new designer.editors.checkEditor();
@@ -186,7 +202,7 @@
 				},
 				checkAttachment: {
 					name: 'checkAttachment',
-					label: '可否查看附件',
+					label: '可查看附件',
 					value: '',
 					editor: function() {
 						return new designer.editors.checkEditor();
@@ -200,9 +216,9 @@
 						return new designer.editors.checkEditor();
 					}
 				},
-				isUseTrueName: {
-					name: 'isUseTrueName',
-					label: '是否现实姓名',
+				isShowTrueName: {
+					name: 'isShowTrueName',
+					label: '是否显示姓名',
 					value: '',
 					editor: function() {
 						return new designer.editors.checkEditor();
@@ -211,6 +227,22 @@
 				promptNext: {
 					name: 'promptNext',
 					label: '信息提示下一步',
+					value: '',
+					editor: function() {
+						return new designer.editors.checkEditor();
+					}
+				},
+				ownFunction: {
+					name: 'ownFunction',
+					label: '隶属功能',
+					value: '',
+					editor: function() {
+						return new designer.editors.inputEditor();
+					}
+				},
+				talkToPre: {
+					name: 'talkToPre',
+					label: '和上一环节对话',
 					value: '',
 					editor: function() {
 						return new designer.editors.checkEditor();

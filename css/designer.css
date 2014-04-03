@@ -116,6 +116,9 @@ body {
 #properties_handle div.active{
 	background-color: #CDF07F;
 }
+/*#property .active{
+	background-color: #CDF07F;
+}*/
 
 
 /***************流程信息栏************************/

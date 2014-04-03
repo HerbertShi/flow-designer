@@ -45,3 +45,11 @@ body {
 .designer-toolBox .toolbox-node img{
 	margin-right: 10px;
 }
+/****************属性栏******************/
+.designer-prop{
+	border:1px solid #9AC3E1;
+	background-color: #fff;
+	/*width: 120px;*/
+	cursor: default;
+	padding: 3px;
+}
