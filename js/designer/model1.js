@@ -1,6 +1,6 @@
 ﻿(function($) {
 	var designer = $.designer;
-
+	
 	$.extend(true, designer.config.states, {
 		start: {
 			showType: 'image',
@@ -29,12 +29,21 @@
 						return new designer.editors.readOnlyEditor();
 					}
 				},
+
 				displayName: {
 					name: 'displayName',
 					label: '显示名称',
 					value: '开始节点',
 					editor: function() {
 						return new designer.editors.textEditor();
+					}
+				},
+				sponsorJob: {
+					name: 'sponsorJob',
+					label: '主办人职务',
+					value: '',
+					editor: function() {
+						return new designer.editors.inputEditor();
 					}
 				}
 			}
@@ -110,7 +119,7 @@
 				sponsorJob: {
 					name: 'sponsorJob',
 					label: '主办人职务',
-					value: '123',
+					value: '',
 					editor: function() {
 						return new designer.editors.inputEditor();
 					}
@@ -121,8 +130,8 @@
 					value: '',
 					editor: function() {
 						return new designer.editors.selectEditor([{
-							name: 'ANY',
-							value: 'ANY'
+							name: '开始节点',
+							value: '开始节点'
 
 						}, {
 							name: 'ALL',
@@ -131,7 +140,6 @@
 							name: '男',
 							value: '男'
 						}
-
 						]);
 					}
 				},
@@ -163,7 +171,7 @@
 				replyOpinion: {
 					name: 'replyOpinion',
 					label: '可回复意见',
-					value: '',
+					value: 'false',
 					editor: function() {
 						return new designer.editors.checkEditor();
 					}
@@ -171,7 +179,7 @@
 				checkOpinion: {
 					name: 'checkOpinion',
 					label: '查看意见',
-					value: '',
+					value: 'false',
 					editor: function() {
 						return new designer.editors.checkEditor();
 					}
@@ -179,7 +187,7 @@
 				checkHostOpinion: {
 					name: 'checkHostOpinion',
 					label: '查看主办人意见',
-					value: '',
+					value: 'false',
 					editor: function() {
 						return new designer.editors.checkEditor();
 					}
@@ -187,7 +195,7 @@
 				checkCooOpinion: {
 					name: 'checkCooOpinion',
 					label: '查看协办人意见',
-					value: '',
+					value: 'false',
 					editor: function() {
 						return new designer.editors.checkEditor();
 					}
@@ -195,7 +203,7 @@
 				insertAttachment: {
 					name: 'insertAttachment',
 					label: '可插入附件',
-					value: '',
+					value: 'false',
 					editor: function() {
 						return new designer.editors.checkEditor();
 					}
@@ -203,7 +211,7 @@
 				checkAttachment: {
 					name: 'checkAttachment',
 					label: '可查看附件',
-					value: '',
+					value: 'false',
 					editor: function() {
 						return new designer.editors.checkEditor();
 					}
@@ -211,7 +219,7 @@
 				trackAccepter: {
 					name: 'trackAccepter',
 					label: '跟踪验收人',
-					value: '',
+					value: 'false',
 					editor: function() {
 						return new designer.editors.checkEditor();
 					}
@@ -219,7 +227,7 @@
 				isShowTrueName: {
 					name: 'isShowTrueName',
 					label: '是否显示姓名',
-					value: '',
+					value: 'false',
 					editor: function() {
 						return new designer.editors.checkEditor();
 					}
@@ -227,7 +235,7 @@
 				promptNext: {
 					name: 'promptNext',
 					label: '信息提示下一步',
-					value: '',
+					value: 'false',
 					editor: function() {
 						return new designer.editors.checkEditor();
 					}
@@ -243,7 +251,7 @@
 				talkToPre: {
 					name: 'talkToPre',
 					label: '和上一环节对话',
-					value: '',
+					value: 'false',
 					editor: function() {
 						return new designer.editors.checkEditor();
 					}
@@ -251,7 +259,7 @@
 				approvedIsNeedIdentityConfirm: {
 					name: 'approvedIsNeedIdentityConfirm',
 					label: '审批是否需要身份确认',
-					value: '',
+					value: 'false',
 					editor: function() {
 						return new designer.editors.checkEditor();
 					}
