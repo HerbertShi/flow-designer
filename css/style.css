@@ -53,3 +53,13 @@ body {
 	cursor: default;
 	padding: 3px;
 }
+
+.flowInfoTable{
+	margin: 10px;
+}
+
+.flowInfoTable th,.flowInfoTable td{
+	padding: 8px;
+	border: 1px solid #ccc;
+	text-align: center;
+}

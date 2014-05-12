@@ -161,7 +161,7 @@
 
 	<div id="flow"></div>
 
-	<div id="flowInfoTable">
+	<div id="flowInfoTable" class="flowInfoTable" style="display:none;">
 		<table>
 			<thead>
 				<tr>
@@ -187,6 +187,133 @@
 				</tr>
 			</thead>
 			<tbody id="tbody">
+			</tbody>
+		</table>
+	</div>
+
+	<div class="flowInfoTable">
+		<table>
+			<thead>
+				<tr>
+					<th>流转次序</th>
+					<th>节点名称</th>
+					<th>主办人信息</th>
+					<th>协办人信息</th>
+					<th>驳回到</th>
+					<th>流转期限</th>
+					<th>可回复意见</th>
+					<th>可查看上一步主办人意见</th>
+					<th>可查看上一步协办人意见</th>
+					<th>可查看历史意见</th>
+					<th>可插入附件</th>
+					<th>可查看附件</th>
+					<th>跟踪验收人</th>
+					<th>是否显示姓名</th>
+					<th>信息提醒下一步</th>
+					<th>隶属功能</th>
+					<th>和上一环节对话</th>
+					<th>审批是否需要身份确认</th>
+					<th>对应表单</th>
+					<th>填写说明</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>1</td>
+					<td>开始节点</td>
+					<td>采购员-张三</td>
+					<td>-</td>
+					<td>-</td>
+					<td>2天</td>
+					<td><input type="checkbox" checked /></td>
+					<td><input type="checkbox" checked /></td>
+					<td><input type="checkbox" checked /></td>
+					<td><input type="checkbox" checked /></td>
+					<td><input type="checkbox" checked /></td>
+					<td><input type="checkbox" checked /></td>
+					<td>-</td>
+					<td><input type="checkbox" checked /></td>
+					<td><input type="checkbox" checked /></td>
+					<td>-</td>
+					<td><input type="checkbox" checked /></td>
+					<td><input type="checkbox"  /></td>
+					<td><select>
+						<option>请购单</option>
+					</select></td>
+					<td>采购员操作请购单</td>
+				</tr>
+				<tr>
+					<td>2</td>
+					<td>采购经理审批</td>
+					<td>采购经理-李四</td>
+					<td>-</td>
+					<td>开始节点</td>
+					<td>2天</td>
+					<td><input type="checkbox" checked /></td>
+					<td><input type="checkbox" checked /></td>
+					<td><input type="checkbox" checked /></td>
+					<td><input type="checkbox" checked /></td>
+					<td><input type="checkbox" checked /></td>
+					<td><input type="checkbox" checked /></td>
+					<td>-</td>
+					<td><input type="checkbox" checked /></td>
+					<td><input type="checkbox" checked /></td>
+					<td>-</td>
+					<td><input type="checkbox" checked /></td>
+					<td><input type="checkbox"  /></td>
+					<td><select>
+						<option>请购单</option>
+					</select></td>
+					<td>采购经理审批请购单</td>
+				</tr>
+				<tr>
+					<td>3</td>
+					<td>总经理审批</td>
+					<td>总经理-张三丰</td>
+					<td>-</td>
+					<td>开始节点</td>
+					<td>2天</td>
+					<td><input type="checkbox" checked /></td>
+					<td><input type="checkbox" checked /></td>
+					<td><input type="checkbox" checked /></td>
+					<td><input type="checkbox" checked /></td>
+					<td><input type="checkbox" checked /></td>
+					<td><input type="checkbox" checked /></td>
+					<td>-</td>
+					<td><input type="checkbox" checked /></td>
+					<td><input type="checkbox" checked /></td>
+					<td>-</td>
+					<td><input type="checkbox" checked /></td>
+					<td><input type="checkbox"  /></td>
+					<td><select>
+						<option>请购单</option>
+					</select></td>
+					<td>总经理审批请购单</td>
+				</tr>
+				<tr>
+					<td>4</td>
+					<td>结束节点</td>
+					<td>采购员-张三</td>
+					<td>-</td>
+					<td>-</td>
+					<td>2天</td>
+					<td><input type="checkbox" checked /></td>
+					<td><input type="checkbox" checked /></td>
+					<td><input type="checkbox" checked /></td>
+					<td><input type="checkbox" checked /></td>
+					<td><input type="checkbox" checked /></td>
+					<td><input type="checkbox" checked /></td>
+					<td>-</td>
+					<td><input type="checkbox" checked /></td>
+					<td><input type="checkbox" checked /></td>
+					<td>-</td>
+					<td><input type="checkbox" checked /></td>
+					<td><input type="checkbox"  /></td>
+					<td><select>
+						<option>请购单</option>
+					</select></td>
+					<td>采购员由请购单生成采购单</td>
+				</tr>
 			</tbody>
 		</table>
 	</div>
