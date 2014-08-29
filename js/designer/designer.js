@@ -688,6 +688,9 @@
 			if(!designer.config.editable){return}
 			if(i.keyCode==46){
 				var j=JQ(y).data("currNode");
+
+				console.log(j.getId());
+
 				if(j){
 					if(j.getId().substring(0,4)=="rect"){
 						JQ(y).trigger("removerect",j)
@@ -707,6 +710,7 @@
 			});
 			JQ(y).trigger("showprops",[designer.config.props.props,{getId:function(){return ""}}])
 		});
+        
 		var w=function(c,i){
 			if(!designer.config.editable){return}
 			if(i.getId().substring(0,4)=="rect"){
@@ -721,6 +725,7 @@
 			/*console.log(q);
 			console.log(g);
 			console.log("---------------------------");*/
+			//console.log(i.getId());
 			JQ("#sync").trigger("sync",{"node":q,"path":g});
 		};
 		JQ(y).bind("removepath",w);

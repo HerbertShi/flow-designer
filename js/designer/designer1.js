@@ -1,6 +1,7 @@
 (function(JQ) {
 	var flow = {}, toolBox = {}, prop = {} ,flowInfoTable={},designer = {};
 
+	
 	designer.config = {
 		basePath:"",
 		lineHeight:15,
@@ -169,27 +170,24 @@
 		JQ(obj)
 			.addClass(option.cssClass)
 			.css(option.attr);
-
+		var q={};
+        var g={};	
 		var svg = Raphael(obj, JQ(obj).width(), JQ(obj).height());
 
 		JQ(obj).data("node",[]);
 		JQ(obj).data("route",[]);
-
-        var q={};
-        var g={};
-
+      //-------4_14----4_22加了注释------
+		/*q=JQ(obj).data("node");
+		g=JQ(obj).data("route");*/
+       //-------4_14----------
 		JQ(svg)
 			.bind("addnode", function(e, type, option) {
 			var rect = new flow.node(obj, this, JQ.extend(true, {}, designer.config.states[type], option));
 				JQ(obj).data("node").push(rect);
-				
 				q[rect.getId()]=rect;
-				//console.log(q);
 				JQ("#sync").trigger("sync",{"node":q,"path":g});
-				
-				rect.focus();
-				 //触发flowToTable事件
-			//designer.config.flowInfoTableInstance.trigger("showTable",rect);
+
+				rect.focus();	
 			})
 			.bind("addroute", function(e, option) {
 				if (option.props.from == option.props.to) {
@@ -206,11 +204,36 @@
 				var path = new flow.path(obj, this, option);
 				
 				g[path.getId()]=path;
-				//console.log(g);
 				JQ(obj).data("route").push(path);
+			
 				JQ("#sync").trigger("sync",{"node":q,"path":g});
 			})
 			.bind("removeobject", function() {
+				var cNodeId = JQ(obj).data("currentObject").getId();
+				var s=designer.util.isLine(JQ(obj).data("currentObject"));
+				var Olength = cNodeId.length;
+				//删除节点的情况
+				if (!s) {
+					var delToPathId = "";
+					var delFromPathId = "";
+					for (var i = 0; i < JQ(obj).data("route").length; i++) {
+						if (JQ(obj).data("route")[i].getToNodeId() == cNodeId) {
+							delToPathId = JQ(obj).data("route")[i].getId();
+						}
+						if (JQ(obj).data("route")[i].getFromNodeId() == cNodeId) {
+							delFromPathId = JQ(obj).data("route")[i].getId();
+						}
+					}
+					q[JQ(obj).data("currentObject").getId()] = null;
+					g[delToPathId] = null;
+					g[delFromPathId] = null;
+				} else {
+					//删除连线的情况
+					g[cNodeId] = null;
+				}
+				
+				JQ("#sync").trigger("sync", {"node": q,"path": g});
+
 				JQ(obj).data("currentObject").remove();
 			})
 			.bind("click",function(e,x,y){
@@ -223,6 +246,9 @@
 					}
 					JQ(obj).data("currentObject",null);
 				}
+				//------------4_24-----
+				JQ("#sync").trigger("sync", {"node": q,"path": g});				
+				//-----------------
 
 			});
 
@@ -244,6 +270,7 @@
 			if (e.keyCode == 46) {
 				var currentObject = JQ(obj).data("currentObject");
 				if (currentObject != null) {
+					JQ(obj).data("currentObject").blur();
 					JQ(svg).trigger("removeobject");
 				}
 			}
@@ -372,16 +399,59 @@
 						to: rect.getId()
 					}
 				});
+
 			}
 			JQ(obj).data("currentObject", rect);
-           
+			
+			//-------4_11----
+			//console.log(rect.toJson().type);
+			//JQ.selItems.splice(0,JQ.selItems.length);
+
+			JQ.selItems.length=0;
+			JQ.selItems.push(JQ(obj).data("currentObject").getId());
+			getNodeList(JQ(obj).data("currentObject"));
+            function getNodeList(rect){
+            	if(rect.toJson().type=="task"){
+				var currentNodeId=rect.getId();
+				for(var i=0;i<JQ(obj).data("route").length;i++){
+					if(currentNodeId==JQ(obj).data("route")[i].getToNodeId()){
+						for(var j=0;j<JQ(obj).data("node").length;j++){
+							if(JQ(obj).data("node")[j].getId()==JQ(obj).data("route")[i].getFromNodeId()){
+								JQ.selItems.push(JQ(obj).data("node")[j].toJson().props.displayName.value);
+								getNodeList(JQ(obj).data("node")[j]);
+							}
+						}
+					}
+				}
+			}
+            }
+            //元素反转索引从1开始,因为索引为0存储是当前rect的ID
+            for(var i=1;i<JQ.selItems.length/2;i++){
+            	var temp=JQ.selItems[i];
+            	JQ.selItems[i]=JQ.selItems[JQ.selItems.length-i];
+            	JQ.selItems[JQ.selItems.length-i]=temp;
+            }
+            var setDefult="";
+            if(JQ.saveList.length>0){
+            	for(var i=0;i<JQ.saveList.length;i++){
+            		if(JQ.saveList[i].id==JQ.selItems[0]){
+            			setDefult=JQ.saveList[i].text;
+            		}
+            	}
+            }
+            for(var i=1;i<JQ.selItems.length;i++){
+            	if(i>1&&JQ.selItems[i]==setDefult){
+            		var temp=JQ.selItems[i];
+            		JQ.selItems[i]=JQ.selItems[1];
+            		JQ.selItems[1]=temp;
+            		break;
+            	}
+            }
+
+			//-------4_11----
 			//触发prop出现事件
 			designer.config.propInstance.trigger("show",rect);
 
-			//designer.config.propInstance.trigger("show");
-
-			//designer.config.flowInfoTableInstance.empty();
-			//designer.config.flowInfoTableInstance.trigger("showTable",rect);
 		};
 
 		this.blur = function() {
@@ -451,14 +521,10 @@
 		};
 
 		this.setPropValue = function(propName,propValue){
-			option.props[propName].value = propValue;
-			
-			//console.log($(option.props[propName].value));
-			
+			option.props[propName].value = propValue;	
 		};
 		this.setText=function(newText){
-			//option.text.text=newText;
-			text.attr("text",newText);	
+			text.attr("text",newText);
 		}
 
 		JQ(rect).data("route",[]);
@@ -466,7 +532,6 @@
 
 	flow.path = function(obj, svg, option) {
 		option = JQ.extend(true, {}, designer.config.path, option);
-
 		var path = this,
 			line, arrow, route = svg.set(),
 			fromNode,toNode;
@@ -607,31 +672,20 @@
                 	var prop = props[p];
                 	var content = JQ("<div></div>");
                 	content.append(prop.label);
-                	if(p=="displayName"){
+                	//--------4_14-------
+                	if(prop.label=="驳回到"){
                 		prop.editor().init(content,rect,prop);
                 	}else{
-                	prop.editor().init(content,rect,prop);
-                    } 
+                		prop.editor().init(content,rect,prop);
+                	}
+                	
                 	content.appendTo(propContent);
                 }
-
-               /* var tBody=JQ(obj).find("#tbody");
-		        var num=0;
-		        var t_tr=JQ("<tr id='"+props.id.value+"'></tr>");
-			    for(var i in props){
-				     var prop=props[i];
-				    if(i=="id"){
-					   num++;
-					  t_tr.append("<td>"+num+"</td>")
-				    }else{
-				    t_tr.append("<td>"+prop.value+"</td>");
-			        }
-			    }
-			    t_tr.appendTo(tBody);*/
-				
+    		
         }
         var d1=function(e,rect){
         	propContent.empty();
+
         }
 		JQ(obj).bind("show",d);
 		JQ(obj).bind("hide",d1);
@@ -689,7 +743,7 @@
 			.css(option.attr);
 
 		JQ(obj).children(".toolbox-node[type='select']").click();
-		
+
 	};
 
 	flowInfoTable.init=function(obj,option){
@@ -716,9 +770,7 @@
 		}
 		JQ(obj).bind("showTable",d);*/
 	};
-
 	
-
 	JQ.fn.flow = function(option) {
 		return this.each(function() {
 			flow.init(this, option)
